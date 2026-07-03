@@ -11,6 +11,7 @@
 ## Contents
 
 - Executive Summary
+- List of Figures
 - Part I — Platform Foundation
   - Chapter 1 — Platform Vision
   - Chapter 2 — Architectural Principles
@@ -37,6 +38,7 @@
 - Appendix A — Platform Technology Responsibility Matrix
 - Appendix B — Core Architectural Principles
 - Appendix C — Glossary
+- Appendix D — Figure Production Notes
 
 ---
 
@@ -58,7 +60,41 @@ The platform is built around a simple but powerful division of responsibility:
 
 The central claim of EPAS is that edge systems should not be treated as thin user interfaces attached to cloud software. Physical edge execution has its own responsibilities. Doors open locally. Credentials are scanned locally. Relays fire locally. Compartments become occupied or vacant locally. Operators need immediate feedback locally. When the network is slow, interrupted, or unavailable, the platform must still preserve an accurate account of what happened.
 
-EPAS therefore describes a platform-first architecture rather than a single-purpose application. It establishes the rules, technologies, boundaries, and responsibilities needed to build repeatable edge products from a common foundation.
+EPAS therefore describes a platform-first architecture rather than a single-purpose application. It establishes the rules, technologies, boundaries, and responsibilities needed to build repeatable edge products from a common foundation. The visual structure of this argument is introduced in **Figure 1** and expanded through the remaining figures.
+
+---
+
+## List of Figures
+
+| Figure | Title | Primary Location | Purpose |
+| --- | --- | --- | --- |
+| Figure 1 | Edge Platform Context Model | Executive Summary / Chapter 1 | Shows the relationship between enterprise authority, edge execution, operators, hardware, and audit evidence. |
+| Figure 2 | Platform / Product / Deployment Hierarchy | Chapter 1 | Explains why EPAS governs the platform while SmartLocker is a product expression and customer installations are deployments. |
+| Figure 3 | Platform Technology Map | Chapter 3 | Organizes the major Platform Technologies and their boundaries. |
+| Figure 4 | Commissioning Flow | Chapter 4 | Shows how a generic edge node becomes a site-specific operating system. |
+| Figure 5 | Configurable Workflow Model | Chapter 5 | Shows how workflow configuration drives customer-specific behavior without code forks. |
+| Figure 6 | Runtime Transaction Lifecycle | Chapter 6 | Shows a transaction from initiation through acknowledgement and reconciliation. |
+| Figure 7 | Custody State Model | Chapter 7 | Shows movement among available, reserved, staged, occupied, checked out, returned, defective, and reconciliation states. |
+| Figure 8 | Transaction Journal and Recovery Model | Chapter 8 | Shows how incomplete transactions are detected, recovered, acknowledged, or reconciled. |
+| Figure 9 | Hardware Abstraction Layer | Chapter 9 | Shows platform logic separated from scanners, readers, relay controllers, sensors, and future hardware. |
+| Figure 10 | Local Persistence Model | Chapter 10 | Shows configuration, locker status, journal, audit, diagnostics, and reconciliation queues. |
+| Figure 11 | Edge-to-Backend Responsibility Split | Chapter 11 | Shows which responsibilities belong to the enterprise backend and which belong to edge execution. |
+| Figure 12 | Cross-Cutting Services Fabric | Chapter 12 | Shows logging, tracing, health, diagnostics, retry policy, and correlation across the platform. |
+| Figure 13 | Security Trust Boundary Model | Chapter 13 | Shows actor identity, kiosk identity, backend identity, administrative access, and protected local configuration. |
+| Figure 14 | Administrative Operations Model | Chapter 14 | Shows governed support actions, diagnostics, recovery, and overrides. |
+| Figure 15 | Deployment Package Model | Chapter 15 | Shows operating system, application runtime, hardware drivers, configuration, database, and support artifacts. |
+| Figure 16 | Commercial Reuse Flywheel | Chapter 16 | Shows how platform-first engineering reduces deployment cost and compounds product value. |
+| Figure 17 | Platform Evolution Roadmap | Chapter 17 | Shows future Platform Technologies and extension points. |
+| Figure 18 | IP Strategy Map | Chapter 18 | Shows how vocabulary, architecture, implementation, and evidence support defensible intellectual property. |
+| Figure 19 | EPAS Strategic Summary | Chapter 19 | Summarizes the full platform argument in one executive graphic. |
+
+---
+
+## Figure 1 — Edge Platform Context Model
+
+> **Diagram Placeholder:** Create a context diagram with the Edge Platform at the center. Surrounding entities should include Enterprise Systems, Human Operators, Physical Compartments, Credential/Scan Devices, Hardware Controllers, Local Persistence, Audit Evidence, and Administrative Support. Use arrows to show enterprise authorization flowing toward the edge, physical execution occurring locally, and acknowledgement/reconciliation flowing back to enterprise systems.
+
+**Caption:** Figure 1 — The Edge Platform coordinates enterprise authority, local physical execution, hardware control, operational state, and audit evidence.
 
 ---
 
@@ -68,7 +104,7 @@ EPAS therefore describes a platform-first architecture rather than a single-purp
 
 ## 1.1 Purpose
 
-The Edge Platform exists to make physical edge operations trustworthy, repeatable, configurable, and commercially reusable. It is intended for systems where software is responsible for authorizing, controlling, recording, and reconciling physical actions.
+The Edge Platform exists to make physical operations trustworthy, repeatable, configurable, and commercially reusable. It is intended for systems where software is responsible for authorizing, controlling, recording, and reconciling physical actions. **Figure 1** shows the broad operating context in which EPAS applies.
 
 Examples include:
 
@@ -94,7 +130,13 @@ EPAS distinguishes between three levels of design:
 - **Product:** A packaged expression of the platform, such as SmartLocker.
 - **Deployment:** A configured instance of the product for a customer, site, workflow, hardware set, and operating policy.
 
-This distinction is fundamental. Product features should strengthen the platform whenever possible. Deployment-specific behavior should be expressed through configuration rather than source-code forks.
+This distinction is fundamental. Product features should strengthen the platform whenever possible. Deployment-specific behavior should be expressed through configuration rather than source-code forks. **Figure 2** should be used whenever EPAS is explained to a business, engineering, or investor audience because it prevents confusion between the platform, the product, and any one customer installation.
+
+## Figure 2 — Platform / Product / Deployment Hierarchy
+
+> **Diagram Placeholder:** Create a three-tier hierarchy. Top tier: Edge Platform / EPAS. Middle tier: product expressions such as SmartLocker, asset custody kiosk, package exchange system, and future edge products. Bottom tier: customer deployments, sites, workflows, hardware configurations, and operating policies. Use downward arrows for inheritance and upward arrows for product learning feeding the platform.
+
+**Caption:** Figure 2 — EPAS governs the reusable platform; products express the platform; deployments configure products for specific customers and sites.
 
 ## 1.3 Architectural Goal
 
@@ -131,13 +173,13 @@ Examples:
 
 ## 2.3 Principle 2 — Separation of Responsibilities
 
-Business intent, runtime execution, custody, transaction integrity, hardware control, persistence, enterprise integration, and administration are intentionally separated into independent Platform Technologies.
+Business intent, runtime execution, custody, transaction integrity, hardware control, persistence, enterprise integration, and administration are intentionally separated into independent Platform Technologies. The separated technology boundaries are summarized visually in **Figure 3**.
 
 This separation prevents the kiosk user interface from becoming the owner of business rules, hardware details, backend contracts, and transaction recovery. The UI presents and collects information. Platform services govern execution.
 
 ## 2.4 Principle 3 — Configuration Before Customization
 
-Deployments should differ through configuration before source-code customization. Customer-specific behavior should be expressed through workflow definitions, validation profiles, hardware mappings, site settings, and policy configuration whenever practical.
+Deployments should differ through configuration before source-code customization. Customer-specific behavior should be expressed through workflow definitions, validation profiles, hardware mappings, site settings, and policy configuration whenever practical. **Figure 5** illustrates this principle by separating workflow definition from runtime execution.
 
 This principle makes the platform commercially scalable. It allows one product family to support Ryder-style asset workflows, Shaw-style equipment pickup, package workflows, staging workflows, and future custody use cases without fragmenting the codebase.
 
@@ -145,17 +187,17 @@ This principle makes the platform commercially scalable. It allows one product f
 
 Identical operational inputs should produce identical architectural behavior. Deterministic execution simplifies diagnostics, testing, certification, recovery, support, and long-term maintenance.
 
-Where external conditions vary, such as backend availability or hardware response timing, the platform must preserve deterministic local decisions and durable journal records.
+Where external conditions vary, such as backend availability or hardware response timing, the platform must preserve deterministic local decisions and durable journal records. **Figure 8** shows how transaction journaling protects deterministic recovery.
 
 ## 2.6 Principle 5 — Operational Trust
 
-The Edge Platform maintains trustworthy operational state even when enterprise connectivity is temporarily unavailable. Enterprise systems coordinate business operations; edge systems execute physical operations.
+The Edge Platform maintains trustworthy operational state even when enterprise connectivity is temporarily unavailable. Enterprise systems coordinate business operations; edge systems execute physical operations. The edge/backend responsibility split is shown in **Figure 11**.
 
 A physical door opening is not theoretical. Once it occurs, the edge system must record it, even if the backend cannot be reached at that moment.
 
 ## 2.7 Principle 6 — Platform Before Product
 
-SmartLocker is an implementation of the Edge Platform. Engineering investment should strengthen the common platform before adding product-specific capability.
+SmartLocker is an implementation of the Edge Platform. Engineering investment should strengthen the common platform before adding product-specific capability. This relationship is established in **Figure 2** and extended commercially in **Figure 16**.
 
 Product-specific names, screens, labels, and workflows may vary. The platform responsibilities should remain stable.
 
@@ -167,22 +209,28 @@ Product-specific names, screens, labels, and workflows may vary. The platform re
 
 The platform is organized into Platform Technologies. A Platform Technology is a durable architectural responsibility with a clear owner, stable interfaces, and reusable value across deployments.
 
+## Figure 3 — Platform Technology Map
+
+> **Diagram Placeholder:** Create a layered architecture map. Suggested center layer: Runtime Orchestration. Surround it with Configurable Workflow Engine, Custody Governance, Transaction Integrity, Hardware Abstraction, Local Persistence, Backend Integration, Security Architecture, Administrative Services, Cross-Cutting Services, Commissioning Technology, Deployment Architecture, and Commercial Architecture. Use boundary boxes to make responsibility separation obvious.
+
+**Caption:** Figure 3 — The Edge Platform is composed of reusable Platform Technologies with explicit ownership and boundaries.
+
 ## 3.2 Core Platform Technologies
 
 The first-generation Edge Platform includes the following technologies:
 
-1. **Commissioning Technology** — Initializes site, kiosk, controller, locker bank, hardware, and local database identity.
-2. **Configurable Workflow Engine** — Defines and executes customer workflows through configuration.
-3. **Runtime Orchestration** — Coordinates credential scan, reference scan, validation, authorization, compartment assignment, hardware action, state update, ACK, and recovery.
-4. **Custody Governance** — Governs asset, package, device, and compartment custody rules.
-5. **Transaction Integrity** — Journals every critical step and supports recovery after interruption.
-6. **Hardware Abstraction** — Isolates device-specific behavior behind stable platform interfaces.
-7. **Local Persistence** — Maintains local operational state, configuration, transaction records, and diagnostics.
-8. **Backend Integration** — Communicates with enterprise APIs for validation, authorization, acknowledgement, and reconciliation.
-9. **Cross-Cutting Services** — Provides logging, tracing, correlation IDs, error handling, telemetry, diagnostics, and service health.
-10. **Security Architecture** — Protects credentials, identities, device permissions, and operational boundaries.
-11. **Administrative Services** — Enables local support, diagnostics, override workflows, commissioning review, and reconciliation.
-12. **Deployment Architecture** — Defines how platform software is packaged, configured, installed, upgraded, and supported.
+1. **Commissioning Technology** — Initializes site, kiosk, controller, locker bank, hardware, and local database identity. See **Figure 4**.
+2. **Configurable Workflow Engine** — Defines and executes customer workflows through configuration. See **Figure 5**.
+3. **Runtime Orchestration** — Coordinates credential scan, reference scan, validation, authorization, compartment assignment, hardware action, state update, ACK, and recovery. See **Figure 6**.
+4. **Custody Governance** — Governs asset, package, device, and compartment custody rules. See **Figure 7**.
+5. **Transaction Integrity** — Journals every critical step and supports recovery after interruption. See **Figure 8**.
+6. **Hardware Abstraction** — Isolates device-specific behavior behind stable platform interfaces. See **Figure 9**.
+7. **Local Persistence** — Maintains local operational state, configuration, transaction records, and diagnostics. See **Figure 10**.
+8. **Backend Integration** — Communicates with enterprise APIs for validation, authorization, acknowledgement, and reconciliation. See **Figure 11**.
+9. **Cross-Cutting Services** — Provides logging, tracing, correlation IDs, error handling, telemetry, diagnostics, and service health. See **Figure 12**.
+10. **Security Architecture** — Protects credentials, identities, device permissions, and operational boundaries. See **Figure 13**.
+11. **Administrative Services** — Enables local support, diagnostics, override workflows, commissioning review, and reconciliation. See **Figure 14**.
+12. **Deployment Architecture** — Defines how platform software is packaged, configured, installed, upgraded, and supported. See **Figure 15**.
 
 ## 3.3 Technology Boundaries
 
@@ -195,6 +243,12 @@ Each Platform Technology should expose interfaces that are stable enough for oth
 ## 4.1 Purpose
 
 Commissioning Technology converts generic platform software into a site-specific edge node. It establishes identity, hardware mapping, locker topology, controller ports, local database records, and initial operational state.
+
+## Figure 4 — Commissioning Flow
+
+> **Diagram Placeholder:** Create a left-to-right process flow: network readiness → customer/site selection → kiosk identity → locker bank identity → controller branch mapping → locker inventory generation → hardware validation → backend registration → initial status creation → commissioning audit record. Include a side lane for administrative review and correction.
+
+**Caption:** Figure 4 — Commissioning binds a generic platform installation to a specific site, kiosk, locker bank, controller configuration, and operational state.
 
 ## 4.2 Commissioning Responsibilities
 
@@ -222,7 +276,7 @@ A properly commissioned edge node should be able to:
 - Validate local hardware communication.
 - Produce a commissioning audit record.
 
-Commissioning is not a one-time setup screen. It is a platform capability that directly affects operational trust.
+Commissioning is not a one-time setup screen. It is a platform capability that directly affects operational trust. The commissioning sequence in **Figure 4** should therefore be treated as a governed platform workflow rather than informal setup labor.
 
 ---
 
@@ -231,6 +285,12 @@ Commissioning is not a one-time setup screen. It is a platform capability that d
 ## 5.1 Purpose
 
 The workflow engine allows customer-specific operational behavior to be expressed as configuration. It defines the screens, steps, references, validations, authorizations, and action semantics used by a deployment.
+
+## Figure 5 — Configurable Workflow Model
+
+> **Diagram Placeholder:** Create a configuration-to-runtime diagram. Left side: workflow definition, validation profile, reference labels, action type, size policy, defect options, home button label. Center: workflow engine. Right side: runtime screens, validation calls, authorization request, locker assignment, physical action, and acknowledgement. Show that configuration changes behavior without source-code forks.
+
+**Caption:** Figure 5 — Workflow configuration defines customer-specific behavior while runtime services preserve common platform execution rules.
 
 ## 5.2 Workflow Model
 
@@ -265,7 +325,7 @@ Example workflow actions include:
 
 ## 5.3 Workflow Execution Principles
 
-Workflow execution must be governed by platform services, not by ad hoc screen logic. The UI may display steps and collect input, but the runtime orchestration layer should decide what happens next.
+Workflow execution must be governed by platform services, not by ad hoc screen logic. The UI may display steps and collect input, but the runtime orchestration layer should decide what happens next. **Figure 5** shows how the configured workflow remains separate from the common runtime engine.
 
 Workflow configuration must be versioned, auditable, and testable. A deployment should be able to answer which workflow definition was active when a transaction occurred.
 
@@ -276,6 +336,12 @@ Workflow configuration must be versioned, auditable, and testable. A deployment 
 ## 6.1 Purpose
 
 Runtime Orchestration coordinates the live execution of a workflow. It translates configuration and user input into a governed transaction.
+
+## Figure 6 — Runtime Transaction Lifecycle
+
+> **Diagram Placeholder:** Create a numbered lifecycle diagram: start transaction → assign correlation IDs → capture actor/credential → capture reference/asset → validate → authorize → select compartment → command hardware → confirm physical action → update local state → send ACK → complete or reconcile. Include exception branches for validation failure, hardware failure, ACK failure, and recovery.
+
+**Caption:** Figure 6 — Runtime Orchestration turns configured workflow intent into a governed physical transaction.
 
 ## 6.2 Typical Runtime Sequence
 
@@ -294,6 +360,8 @@ A typical custody transaction includes:
 11. Mark transaction complete or pending reconciliation.
 12. Write audit and diagnostic records.
 
+This sequence is represented in **Figure 6**. Its journaled counterpart is shown later in **Figure 8**.
+
 ## 6.3 Runtime Rule
 
 No physical action should occur without a transaction context. No transaction context should disappear without a terminal state or recovery path.
@@ -308,9 +376,15 @@ No physical action should occur without a transaction context. No transaction co
 
 Custody Governance defines how the platform treats assets, packages, devices, compartments, actors, and actions as governed custody objects.
 
+## Figure 7 — Custody State Model
+
+> **Diagram Placeholder:** Create a state model with states including Available, Reserved, Staged, Occupied, Checked Out, Retrieved, Returned, Defective, Unknown, and Needs Reconciliation. Show valid transitions for staging, pickup, checkout, return, defect marking, timeout, and reconciliation. Highlight that compartment custody and asset custody may temporarily diverge until reconciled.
+
+**Caption:** Figure 7 — Custody Governance defines valid custody states and transitions for assets, packages, devices, and compartments.
+
 ## 7.2 Custody Concepts
 
-Custody is not merely inventory. Custody means the platform can explain who had authority over an object, where it was physically placed, when it moved, and what evidence supports that record.
+Custody is not merely inventory. Custody means the platform can explain who had authority over an object, where it was physically placed, when it moved, and what evidence supports that record. **Figure 7** gives this concept a reusable state vocabulary.
 
 Custody state may include:
 
@@ -344,7 +418,13 @@ Compartment state should include:
 
 ## 8.1 Purpose
 
-Transaction Integrity protects the platform from losing the truth of what happened during physical operations.
+Transaction Integrity protects the platform from losing the truth of what happened during physical operations. It is the operational mechanism that makes the runtime lifecycle in **Figure 6** recoverable.
+
+## Figure 8 — Transaction Journal and Recovery Model
+
+> **Diagram Placeholder:** Create a journal-centered diagram. Inputs: runtime transaction steps, hardware events, backend calls, local state updates. Center: durable transaction journal with states Created, Authorized, DoorOpened, LocalStateUpdated, AckPending, AckSucceeded, AckFailed, NeedsReconciliation, Completed, Abandoned. Outputs: startup recovery, retry ACK, administrative review, reconciliation request, audit evidence.
+
+**Caption:** Figure 8 — Transaction Integrity preserves local truth and provides a recovery path when transactions are interrupted or acknowledgements fail.
 
 ## 8.2 Transaction Journal
 
@@ -379,6 +459,8 @@ Representative transaction states include:
 - Completed.
 - Abandoned.
 
+These states should align with **Figure 8** and with the custody-state model shown in **Figure 7**.
+
 ## 8.4 Recovery Principle
 
 Startup recovery must inspect incomplete transactions and move them toward a safe state. The platform should never rely on operator memory to reconstruct whether a door opened or an asset was staged.
@@ -390,6 +472,12 @@ Startup recovery must inspect incomplete transactions and move them toward a saf
 ## 9.1 Purpose
 
 Hardware Abstraction isolates platform logic from specific physical devices. The platform should not embed scanner, reader, relay, or controller details inside workflow logic.
+
+## Figure 9 — Hardware Abstraction Layer
+
+> **Diagram Placeholder:** Create a layered diagram. Top: workflow and runtime services. Middle: hardware abstraction interfaces such as scanner adapter, credential reader adapter, locker controller adapter, door sensor adapter, camera adapter, printer adapter. Bottom: concrete devices and protocols. Show that platform services call stable interfaces while adapters own device-specific behavior.
+
+**Caption:** Figure 9 — Hardware Abstraction allows the platform to support multiple physical devices without embedding device details in workflow logic.
 
 ## 9.2 Hardware Categories
 
@@ -410,7 +498,7 @@ The platform may interact with:
 
 Each hardware family should be represented through an adapter that exposes stable platform operations such as scan received, credential read, open compartment, read door state, test controller, or report health.
 
-The adapter owns device-specific details. Platform services own operational meaning.
+The adapter owns device-specific details. Platform services own operational meaning. **Figure 9** should be used in engineering reviews to prevent hardware-specific code from leaking into workflow, custody, or backend-integration services.
 
 ---
 
@@ -419,6 +507,12 @@ The adapter owns device-specific details. Platform services own operational mean
 ## 10.1 Purpose
 
 Local Persistence provides the edge node with durable operational memory. This includes configuration, locker state, journal entries, audit events, hardware mappings, and diagnostic records.
+
+## Figure 10 — Local Persistence Model
+
+> **Diagram Placeholder:** Create a data model diagram showing local stores for kiosk configuration, site identity, locker bank records, locker status, workflow cache, hardware mapping, transaction journal, audit references, diagnostic logs, administrative settings, and reconciliation queue. Show links from runtime services, commissioning, administration, and backend integration.
+
+**Caption:** Figure 10 — Local Persistence gives the edge node durable operational memory for configuration, physical state, transaction recovery, audit, and reconciliation.
 
 ## 10.2 Local Data Categories
 
@@ -436,7 +530,7 @@ The local persistence model should include:
 
 ## 10.3 Persistence Principle
 
-Local persistence should be treated as operational truth for physical edge events until reconciliation proves otherwise. Backend systems remain authoritative for enterprise business records, but the edge platform remains authoritative for what it physically executed.
+Local persistence should be treated as operational truth for physical edge events until reconciliation proves otherwise. Backend systems remain authoritative for enterprise business records, but the edge platform remains authoritative for what it physically executed. **Figure 10** and **Figure 11** should be interpreted together.
 
 ---
 
@@ -445,6 +539,12 @@ Local persistence should be treated as operational truth for physical edge event
 ## 11.1 Purpose
 
 Backend Integration connects edge execution with enterprise authority. It validates credentials, assets, packages, work orders, permissions, reservations, acknowledgements, and reconciliation events.
+
+## Figure 11 — Edge-to-Backend Responsibility Split
+
+> **Diagram Placeholder:** Create a two-column responsibility diagram. Left column: Enterprise Backend, including business rules, actor authority, asset master records, reservation authority, reporting, enterprise audit, configuration distribution. Right column: Edge Platform, including credential capture, physical execution, locker state, hardware commands, local transaction journal, local audit, ACK/retry, offline continuity. Add a center lane for API contracts: validate, authorize, ACK, reconcile, configuration sync.
+
+**Caption:** Figure 11 — Enterprise systems govern business authority; edge systems execute and preserve the truth of local physical operations.
 
 ## 11.2 Integration Responsibilities
 
@@ -478,7 +578,7 @@ Every backend request should include enough identity and context for governance:
 
 ## 11.4 Integration Principle
 
-Backend integration should be explicit and observable. Silent assumptions about identity, workflow, actor, or action type create fragile systems.
+Backend integration should be explicit and observable. Silent assumptions about identity, workflow, actor, or action type create fragile systems. The explicit contract lane in **Figure 11** should become the reference point for API review.
 
 ---
 
@@ -489,6 +589,12 @@ Backend integration should be explicit and observable. Silent assumptions about 
 ## 12.1 Purpose
 
 Cross-Cutting Services support every Platform Technology. They provide the operational fabric needed for traceability, supportability, diagnostics, and reliability.
+
+## Figure 12 — Cross-Cutting Services Fabric
+
+> **Diagram Placeholder:** Create a horizontal fabric diagram beneath all Platform Technologies. Include structured logging, audit logging, correlation IDs, diagnostics, health checks, error classification, retry policy, configuration loading, serialization, telemetry, and support export. Show the fabric touching runtime orchestration, backend integration, local persistence, administration, and hardware abstraction.
+
+**Caption:** Figure 12 — Cross-Cutting Services create the observability and reliability fabric that supports the full platform.
 
 ## 12.2 Core Services
 
@@ -508,7 +614,7 @@ Cross-cutting services include:
 
 ## 12.3 Correlation Principle
 
-Every significant transaction should be traceable across UI activity, workflow execution, hardware command, local persistence, backend request, acknowledgement, and audit record.
+Every significant transaction should be traceable across UI activity, workflow execution, hardware command, local persistence, backend request, acknowledgement, and audit record. **Figure 12** should be used as the checklist for traceability coverage.
 
 ---
 
@@ -517,6 +623,12 @@ Every significant transaction should be traceable across UI activity, workflow e
 ## 13.1 Purpose
 
 Security Architecture protects identities, permissions, credentials, operational authority, and system integrity.
+
+## Figure 13 — Security Trust Boundary Model
+
+> **Diagram Placeholder:** Create a trust-boundary diagram. Include actor identity, credential readers, kiosk identity, local administrator, backend API, local database/configuration, hardware control, and audit records. Show trust boundaries around local device, backend services, administrative access, and physical hardware.
+
+**Caption:** Figure 13 — Security Architecture protects the authority to perform physical actions and the evidence proving those actions occurred.
 
 ## 13.2 Security Domains
 
@@ -534,7 +646,7 @@ Security must address:
 
 ## 13.3 Security Principle
 
-Physical action must require explicit authority. The platform should not treat possession of a scanned value as sufficient proof of permission unless the configured workflow deliberately allows it.
+Physical action must require explicit authority. The platform should not treat possession of a scanned value as sufficient proof of permission unless the configured workflow deliberately allows it. The trust boundaries in **Figure 13** should be reviewed whenever a workflow shortcut is proposed.
 
 ---
 
@@ -543,6 +655,12 @@ Physical action must require explicit authority. The platform should not treat p
 ## 14.1 Purpose
 
 Administrative Services allow trusted personnel to configure, diagnose, recover, and support the platform without bypassing governance.
+
+## Figure 14 — Administrative Operations Model
+
+> **Diagram Placeholder:** Create an administrative operations diagram with roles such as site administrator, support technician, field installer, and platform support. Show governed actions: locker status review, manual compartment test, controller test, workflow review, transaction journal inspection, recovery action, reconciliation action, log export, commissioning review, and out-of-service control. Show all actions flowing into audit logging.
+
+**Caption:** Figure 14 — Administrative Services provide controlled support and recovery actions without bypassing platform governance.
 
 ## 14.2 Administrative Capabilities
 
@@ -562,7 +680,7 @@ Administrative services may include:
 
 ## 14.3 Administrative Principle
 
-Administrative actions are still platform actions. They must be logged, permissioned, and explainable.
+Administrative actions are still platform actions. They must be logged, permissioned, and explainable. **Figure 14** should explicitly show administrative actions flowing into audit evidence.
 
 ---
 
@@ -571,6 +689,12 @@ Administrative actions are still platform actions. They must be logged, permissi
 ## 15.1 Purpose
 
 Deployment Architecture defines how the platform is packaged, installed, configured, upgraded, monitored, and supported.
+
+## Figure 15 — Deployment Package Model
+
+> **Diagram Placeholder:** Create a package/deployment diagram. Include operating system image, application runtime, local database, hardware drivers/libraries, configuration files, certificates/secrets, workflow package, commissioning data, support tools, logging location, upgrade package, rollback package, and field diagnostic export.
+
+**Caption:** Figure 15 — Deployment Architecture packages the platform into repeatable field installations with supportable upgrade and rollback paths.
 
 ## 15.2 Deployment Concerns
 
@@ -591,7 +715,7 @@ A deployment must account for:
 
 ## 15.3 Deployment Principle
 
-Deployment should be repeatable. A field installation should not depend on undocumented tribal knowledge.
+Deployment should be repeatable. A field installation should not depend on undocumented tribal knowledge. The deployment package in **Figure 15** should become the baseline for installation checklists and support documentation.
 
 ---
 
@@ -600,6 +724,12 @@ Deployment should be repeatable. A field installation should not depend on undoc
 ## 16.1 Purpose
 
 Commercial Architecture connects engineering structure to business value. EPAS is not only a technical document; it is a strategy for converting one-off engineering into reusable platform capability.
+
+## Figure 16 — Commercial Reuse Flywheel
+
+> **Diagram Placeholder:** Create a flywheel diagram: platform architecture → product capability → customer deployment → field learning → reusable platform improvement → faster future deployment → stronger commercial position. Include cost reduction, supportability, IP defensibility, and integration repeatability as side benefits.
+
+**Caption:** Figure 16 — Platform-first engineering compounds commercial value by turning deployment learning into reusable capability.
 
 ## 16.2 Commercial Value
 
@@ -616,7 +746,7 @@ The platform creates value by:
 
 ## 16.3 Commercial Principle
 
-The platform should make the second deployment easier than the first and the tenth deployment dramatically easier than the second.
+The platform should make the second deployment easier than the first and the tenth deployment dramatically easier than the second. **Figure 16** is the visual expression of this principle.
 
 ---
 
@@ -627,6 +757,12 @@ The platform should make the second deployment easier than the first and the ten
 ## 17.1 Purpose
 
 The Edge Platform should evolve without losing its architectural center. Future capability should extend the platform model rather than bypass it.
+
+## Figure 17 — Platform Evolution Roadmap
+
+> **Diagram Placeholder:** Create a roadmap graphic with near-term, mid-term, and long-term evolution lanes. Include multi-bank orchestration, advanced reconciliation, remote commissioning, mobile administration, camera evidence, environmental monitoring, predictive maintenance, offline-first workflow packages, plugin adapters, expanded custody objects, cloud-managed workflow versioning, and AI-assisted diagnostics.
+
+**Caption:** Figure 17 — Future evolution should extend the platform through reusable Platform Technologies and governed extension points.
 
 ## 17.2 Candidate Evolution Areas
 
@@ -647,7 +783,7 @@ Future evolution may include:
 
 ## 17.3 Evolution Principle
 
-New capabilities should become Platform Technologies when they represent reusable architectural responsibility rather than one-customer customization.
+New capabilities should become Platform Technologies when they represent reusable architectural responsibility rather than one-customer customization. Candidate Platform Technologies should be evaluated against the roadmap in **Figure 17**.
 
 ---
 
@@ -656,6 +792,12 @@ New capabilities should become Platform Technologies when they represent reusabl
 ## 18.1 Purpose
 
 EPAS documents the architecture, vocabulary, boundaries, and operating principles that make the Edge Platform distinct. This supports engineering clarity, onboarding, customer communication, and intellectual property development.
+
+## Figure 18 — IP Strategy Map
+
+> **Diagram Placeholder:** Create a map connecting architectural vocabulary, Platform Technologies, implementation evidence, customer workflows, transaction records, diagrams, and commercial packaging. Show potential IP categories: patents, trade secrets, copyrighted documentation, design language, customer-specific configurations, and implementation know-how.
+
+**Caption:** Figure 18 — EPAS supports intellectual property strategy by connecting architecture, vocabulary, implementation, evidence, and commercial expression.
 
 ## 18.2 Protectable Concepts
 
@@ -672,7 +814,7 @@ Potentially protectable or commercially defensible concepts include:
 
 ## 18.3 IP Principle
 
-The platform should be described consistently. Consistent vocabulary supports patents, trade secrets, customer proposals, training materials, and engineering execution.
+The platform should be described consistently. Consistent vocabulary supports patents, trade secrets, customer proposals, training materials, and engineering execution. **Figure 18** should be used when converting EPAS into legal, commercial, or investor-facing materials.
 
 ---
 
@@ -680,29 +822,35 @@ The platform should be described consistently. Consistent vocabulary supports pa
 
 The Edge Platform is a governed execution architecture for physical operations at the edge. It treats locker control, asset custody, package movement, credential validation, workflow execution, transaction journaling, and backend reconciliation as parts of one coherent system.
 
+## Figure 19 — EPAS Strategic Summary
+
+> **Diagram Placeholder:** Create a one-page executive summary graphic. Center message: governed physical-edge execution. Surround it with platform-first architecture, configurable workflows, operational trust, transaction integrity, hardware abstraction, local persistence, backend integration, commercial reuse, and IP strategy. This should be suitable as the final slide of an executive deck.
+
+**Caption:** Figure 19 — EPAS defines a reusable architecture for governed physical-edge execution, commercial platform reuse, and defensible technology development.
+
 The strategic value of EPAS is that it turns a working product into a repeatable platform. It makes the architecture explainable to engineers, customers, partners, executives, and future investors. It also creates a foundation for product expansion beyond any single locker deployment.
 
-The platform succeeds when field operations become boring in the best possible way: predictable, auditable, recoverable, supportable, and repeatable.
+The platform succeeds when field operations become boring in the best possible way: predictable, auditable, recoverable, supportable, and repeatable. This final strategic claim is summarized visually in **Figure 19**.
 
 ---
 
 # Appendix A — Platform Technology Responsibility Matrix
 
-| Platform Technology | Primary Responsibility | Must Not Own |
-| --- | --- | --- |
-| Commissioning Technology | Site, kiosk, bank, controller, and locker setup | Runtime custody decisions |
-| Configurable Workflow Engine | Workflow definition and step progression | Hardware device implementation |
-| Runtime Orchestration | Transaction execution coordination | Enterprise business record ownership |
-| Custody Governance | Custody state rules and movement semantics | Relay-board protocols |
-| Transaction Integrity | Journal, recovery, and transaction state | Customer-specific screen layout |
-| Hardware Abstraction | Device-specific communication | Business authorization |
-| Local Persistence | Local operational state | Cloud source-of-truth policy |
-| Backend Integration | API contracts and enterprise communication | UI rendering |
-| Cross-Cutting Services | Logging, tracing, diagnostics, health | Workflow-specific business meaning |
-| Security Architecture | Identity, authority, permissions, protection | Locker assignment algorithms |
-| Administrative Services | Support, diagnostics, controlled override | Unlogged operational bypass |
-| Deployment Architecture | Install, upgrade, configuration packaging | Product strategy |
-| Commercial Architecture | Platform reuse and business alignment | Low-level runtime implementation |
+| Platform Technology | Primary Responsibility | Must Not Own | Primary Figure |
+| --- | --- | --- | --- |
+| Commissioning Technology | Site, kiosk, bank, controller, and locker setup | Runtime custody decisions | Figure 4 |
+| Configurable Workflow Engine | Workflow definition and step progression | Hardware device implementation | Figure 5 |
+| Runtime Orchestration | Transaction execution coordination | Enterprise business record ownership | Figure 6 |
+| Custody Governance | Custody state rules and movement semantics | Relay-board protocols | Figure 7 |
+| Transaction Integrity | Journal, recovery, and transaction state | Customer-specific screen layout | Figure 8 |
+| Hardware Abstraction | Device-specific communication | Business authorization | Figure 9 |
+| Local Persistence | Local operational state | Cloud source-of-truth policy | Figure 10 |
+| Backend Integration | API contracts and enterprise communication | UI rendering | Figure 11 |
+| Cross-Cutting Services | Logging, tracing, diagnostics, health | Workflow-specific business meaning | Figure 12 |
+| Security Architecture | Identity, authority, permissions, protection | Locker assignment algorithms | Figure 13 |
+| Administrative Services | Support, diagnostics, controlled override | Unlogged operational bypass | Figure 14 |
+| Deployment Architecture | Install, upgrade, configuration packaging | Product strategy | Figure 15 |
+| Commercial Architecture | Platform reuse and business alignment | Low-level runtime implementation | Figure 16 |
 
 ---
 
@@ -731,9 +879,13 @@ The platform succeeds when field operations become boring in the best possible w
 
 **Custody** — Governed responsibility for an asset, package, device, or compartment state.
 
+**Diagram Placeholder** — A manuscript note defining the intent, content, and caption for a future professional figure.
+
 **Edge Node** — A deployed kiosk, locker bank controller, or other field system executing physical operations.
 
 **EPAS** — Edge Platform Architecture Specification.
+
+**Figure Register** — The numbered list of figures used to coordinate manuscript text, diagram production, Canva design work, and final publication layout.
 
 **Hardware Abstraction** — Platform layer that isolates device-specific communication from workflow and business logic.
 
@@ -752,3 +904,38 @@ The platform succeeds when field operations become boring in the best possible w
 **Workflow Action** — The operational intent of a workflow, such as pickup, stage, checkout, return, deposit, or exchange.
 
 **Workflow Key** — A stable configured identifier for a workflow definition.
+
+---
+
+# Appendix D — Figure Production Notes
+
+The figures in this manuscript are intentionally defined as numbered placeholders before final artwork is produced. This allows the architecture, captions, cross-references, and publication structure to stabilize before time is spent on finished graphics.
+
+## D.1 Figure Development Sequence
+
+Recommended figure production order:
+
+1. **Figure 1 — Edge Platform Context Model** because it frames the entire EPAS argument.
+2. **Figure 3 — Platform Technology Map** because it becomes the core architecture overview.
+3. **Figure 6 — Runtime Transaction Lifecycle** because it explains how the platform operates.
+4. **Figure 8 — Transaction Journal and Recovery Model** because it defends operational trust.
+5. **Figure 11 — Edge-to-Backend Responsibility Split** because it clarifies authority and execution.
+6. **Figure 16 — Commercial Reuse Flywheel** because it turns architecture into business value.
+7. **Figure 19 — EPAS Strategic Summary** because it becomes the executive closing graphic.
+
+## D.2 Canva Deck Alignment
+
+The first Canva executive deck should reuse a smaller subset of the figure register:
+
+- Figure 1 as the opening context slide.
+- Figure 2 as the platform/product/deployment explanation.
+- Figure 3 as the architecture overview.
+- Figure 6 as the runtime explanation.
+- Figure 8 as the operational-trust proof point.
+- Figure 11 as the backend/edge split.
+- Figure 16 as the commercial argument.
+- Figure 19 as the closing summary.
+
+## D.3 Publication Rule
+
+Each finished figure should keep the figure number and caption from this manuscript unless the manuscript is deliberately renumbered. Canva graphics, Word/PDF editions, executive briefs, and presentation decks should use the same figure numbers wherever practical to preserve traceability.
