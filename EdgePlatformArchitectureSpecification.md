@@ -1,12 +1,12 @@
 # Edge Platform™ Architecture Specification (EPAS)
 
-**Version 1.1 – Authoritative Working Draft**  
+**Version 1.2 – Authoritative Working Draft**  
 **Repository:** `Gablenook/EPAS`  
 **Document:** `EdgePlatformArchitectureSpecification.md`  
 **Status:** Master manuscript / active architecture specification  
 **Revision Date:** 2026-07-03
 
-> EPAS defines the Edge Platform architecture: the durable engineering foundation for governed physical-edge systems such as SmartLocker, asset custody kiosks, field-deployed device exchange systems, package exchange systems, and other transaction-controlled edge operations.
+> EPAS defines the Toren Edge Platform architecture: the durable engineering foundation for governed physical-edge systems such as asset custody kiosks, field-deployed device exchange systems, package exchange systems, controlled-access equipment systems, and other transaction-controlled edge operations.
 
 ---
 
@@ -20,10 +20,15 @@ This document is the authoritative master manuscript for the Edge Platform Archi
 | --- | --- | --- |
 | 1.0 | 2026-07-02 | Master manuscript established as the authoritative EPAS architecture specification. |
 | 1.1 | 2026-07-03 | Began structured manuscript edit: strengthened document governance, platform thesis, standard chapter pattern, responsibility boundaries, and implementation-alignment language. |
+| 1.2 | 2026-07-03 | Aligned manuscript naming around Toren ownership, EPAS as the platform reference architecture, and generic licensed product/deployment language. |
 
 ### Editing Rule
 
 When architectural language, figures, vocabulary, or technology boundaries change, update this master manuscript first. Downstream documents should be regenerated, revised, or cross-checked against this file.
+
+### Naming and Ownership Rule
+
+Toren is the company, platform owner, and licensor. EPAS is the reference architecture for the Toren Edge Platform. Products, customer systems, licensee implementations, manufactured locker systems, and branded deployments may implement or express the platform, but they do not define the architecture. The master manuscript should therefore avoid tying EPAS to any single product name, customer name, manufacturer, or licensee unless that reference is deliberately required for implementation evidence or commercial context.
 
 ---
 
@@ -65,9 +70,9 @@ When architectural language, figures, vocabulary, or technology boundaries chang
 
 ## Executive Summary
 
-The Edge Platform is a software and systems architecture for controlling trusted physical transactions at the operational edge. It exists for environments where enterprise systems, local devices, human operators, physical compartments, credentials, scanners, relays, doors, sensors, and audit trails must work together as one governed system.
+The Toren Edge Platform is a software and systems architecture for controlling trusted physical transactions at the operational edge. It exists for environments where enterprise systems, local devices, human operators, physical compartments, credentials, scanners, relays, doors, sensors, and audit trails must work together as one governed system.
 
-SmartLocker is the first product expression of the platform. EPAS is broader than SmartLocker. It captures the architectural foundation that allows one platform to support package pickup, asset checkout, device staging, custody transfer, equipment exchange, inventory-controlled access, and future edge workflows without rewriting the core system for each customer.
+EPAS captures the architectural foundation that allows one platform to support package pickup, asset checkout, device staging, custody transfer, equipment exchange, inventory-controlled access, and future edge workflows without rewriting the core system for each customer. The first commercial deployments may include locker-based custody, package exchange, device checkout, equipment staging, and other controlled-access applications, but those deployments are licensed or configured expressions of the Toren Edge Platform rather than the architectural boundary of EPAS.
 
 The platform is built around a simple but powerful division of responsibility:
 
@@ -85,7 +90,7 @@ EPAS therefore describes a platform-first architecture rather than a single-purp
 
 ### Executive Thesis
 
-The Edge Platform creates commercial and technical leverage by converting one-off physical-edge applications into governed, configurable, recoverable, hardware-adaptable platform deployments. Its value is not merely that it opens a locker or validates an asset. Its value is that it defines a repeatable pattern for connecting business authority to local physical execution while preserving operational truth.
+The Toren Edge Platform creates commercial and technical leverage by converting one-off physical-edge applications into governed, configurable, recoverable, hardware-adaptable platform deployments. Its value is not merely that it opens a locker or validates an asset. Its value is that it defines a repeatable pattern for connecting business authority to local physical execution while preserving operational truth.
 
 This thesis has four consequences:
 
@@ -101,7 +106,7 @@ This thesis has four consequences:
 | Figure | Title | Primary Location | Purpose |
 | --- | --- | --- | --- |
 | Figure 1 | Edge Platform Context Model | Executive Summary / Chapter 1 | Shows the relationship between enterprise authority, edge execution, operators, hardware, and audit evidence. |
-| Figure 2 | Platform / Product / Deployment Hierarchy | Chapter 1 | Explains why EPAS governs the platform while SmartLocker is a product expression and customer installations are deployments. |
+| Figure 2 | Platform / Product / Deployment Hierarchy | Chapter 1 | Explains why EPAS governs the Toren Edge Platform while products and customer installations are licensed or configured expressions of the platform. |
 | Figure 3 | Platform Technology Map | Chapter 3 | Organizes the major Platform Technologies and their boundaries. |
 | Figure 4 | Commissioning Flow | Chapter 4 | Shows how a generic edge node becomes a site-specific operating system. |
 | Figure 5 | Configurable Workflow Model | Chapter 5 | Shows how workflow configuration drives customer-specific behavior without code forks. |
@@ -136,7 +141,7 @@ This thesis has four consequences:
 
 ## 1.1 Purpose
 
-The Edge Platform exists to make physical operations trustworthy, repeatable, configurable, and commercially reusable. It is intended for systems where software is responsible for authorizing, controlling, recording, and reconciling physical actions. **Figure 1** shows the broad operating context in which EPAS applies.
+The Toren Edge Platform exists to make physical operations trustworthy, repeatable, configurable, and commercially reusable. It is intended for systems where software is responsible for authorizing, controlling, recording, and reconciling physical actions. **Figure 1** shows the broad operating context in which EPAS applies.
 
 Examples include:
 
@@ -154,21 +159,22 @@ In each case, the system must answer four questions with confidence:
 3. What physical compartment or device was used?
 4. What evidence proves the transaction occurred?
 
-## 1.2 Platform, Product, and Deployment
+## 1.2 Platform, Product, Licensee, and Deployment
 
-EPAS distinguishes between three levels of design:
+EPAS distinguishes between four levels of design and commercialization:
 
-- **Platform:** The durable architecture, runtime services, transaction model, workflow model, hardware abstraction, persistence model, security model, and integration patterns.
-- **Product:** A packaged expression of the platform, such as SmartLocker.
-- **Deployment:** A configured instance of the product for a customer, site, workflow, hardware set, and operating policy.
+- **Platform:** The durable Toren-owned architecture, runtime services, transaction model, workflow model, hardware abstraction, persistence model, security model, and integration patterns.
+- **Product:** A packaged or branded expression of the platform.
+- **Licensee:** A company or business entity authorized to implement, commercialize, manufacture, sell, operate, or distribute a product or deployment based on EPAS.
+- **Deployment:** A configured instance of a product or licensed implementation for a customer, site, workflow, hardware set, and operating policy.
 
-This distinction is fundamental. Product features should strengthen the platform whenever possible. Deployment-specific behavior should be expressed through configuration rather than source-code forks. **Figure 2** should be used whenever EPAS is explained to a business, engineering, or investor audience because it prevents confusion between the platform, the product, and any one customer installation.
+This distinction is fundamental. Product features should strengthen the platform whenever possible. Deployment-specific behavior should be expressed through configuration rather than source-code forks. Licensee or manufacturer-specific language should not be allowed to redefine the platform architecture. **Figure 2** should be used whenever EPAS is explained to a business, engineering, legal, investor, or partner audience because it prevents confusion between the platform, the product, the licensee, and any one customer installation.
 
 ## Figure 2 — Platform / Product / Deployment Hierarchy
 
-> **Diagram Placeholder:** Create a three-tier hierarchy. Top tier: Edge Platform / EPAS. Middle tier: product expressions such as SmartLocker, asset custody kiosk, package exchange system, and future edge products. Bottom tier: customer deployments, sites, workflows, hardware configurations, and operating policies. Use downward arrows for inheritance and upward arrows for product learning feeding the platform.
+> **Diagram Placeholder:** Create a hierarchy with Toren / EPAS / Edge Platform at the top. The middle tier should show product expressions such as asset custody kiosks, package exchange systems, device checkout systems, equipment staging systems, and future edge products. The commercial tier should show licensees, manufacturers, distributors, operators, or product companies that may commercialize platform-based products. The bottom tier should show customer deployments, sites, workflows, hardware configurations, and operating policies. Use downward arrows for architecture inheritance and upward arrows for deployment learning feeding the platform.
 
-**Caption:** Figure 2 — EPAS governs the reusable platform; products express the platform; deployments configure products for specific customers and sites.
+**Caption:** Figure 2 — EPAS governs the reusable Toren Edge Platform; products and licensees express the platform; deployments configure products for specific customers and sites.
 
 ## 1.3 Architectural Goal
 
@@ -185,9 +191,9 @@ The platform must be:
 
 ## 1.4 Product Naming and Brand Independence
 
-EPAS intentionally separates platform language from product and customer names. SmartLocker, Toren, customer-specific kiosks, and future branded products may all express the platform. The architecture should therefore use stable platform vocabulary that survives product naming changes.
+EPAS intentionally separates platform language from product, customer, manufacturer, and licensee names. Toren is the platform owner and licensor. EPAS is the platform reference architecture. Products, licensees, manufacturers, customer-specific kiosks, and future branded systems may all express the platform, but they should not define the architecture.
 
-A product name may carry market identity, but the platform vocabulary carries engineering and intellectual-property continuity.
+A product name may carry market identity, but the platform vocabulary carries engineering, commercial, licensing, and intellectual-property continuity.
 
 ---
 
@@ -235,7 +241,7 @@ A physical door opening is not theoretical. Once it occurs, the edge system must
 
 ## 2.7 Principle 6 — Platform Before Product
 
-SmartLocker is an implementation of the Edge Platform. Engineering investment should strengthen the common platform before adding product-specific capability. This relationship is established in **Figure 2** and extended commercially in **Figure 16**.
+Specific products, licensee systems, customer deployments, and manufactured implementations may express the Toren Edge Platform, but EPAS remains independent of any single product name, manufacturer, customer, or licensee. Engineering investment should strengthen the common platform before adding product-specific capability. This relationship is established in **Figure 2** and extended commercially in **Figure 16**.
 
 Product-specific names, screens, labels, and workflows may vary. The platform responsibilities should remain stable.
 
@@ -686,7 +692,7 @@ Backend integration should be explicit and observable. Silent assumptions about 
 
 ## 11.5 Implementation Alignment Note
 
-The current SmartLocker implementation evidence demonstrates why this contract matters. Stage, checkout, and ACK flows must propagate the active workflow key, workflow action, kiosk identity, locker bank identity, and actor identity through validation, authorization, local state update, acknowledgement, and recovery. Any missing identity field weakens governance because the backend cannot reliably distinguish which edge node, locker bank, actor, workflow, or action produced the physical event.
+Current locker-based implementation evidence demonstrates why this contract matters. Stage, checkout, and ACK flows must propagate the active workflow key, workflow action, kiosk identity, locker bank identity, and actor identity through validation, authorization, local state update, acknowledgement, and recovery. Any missing identity field weakens governance because the backend cannot reliably distinguish which edge node, locker bank, actor, workflow, or action produced the physical event.
 
 ## 11.6 Boundary Rule
 
@@ -940,7 +946,7 @@ The Edge Platform is a governed execution architecture for physical operations a
 
 **Caption:** Figure 19 — EPAS defines a reusable architecture for governed physical-edge execution, commercial platform reuse, and defensible technology development.
 
-The strategic value of EPAS is that it turns a working product into a repeatable platform. It makes the architecture explainable to engineers, customers, partners, executives, and future investors. It also creates a foundation for product expansion beyond any single locker deployment.
+The strategic value of EPAS is that it turns a working implementation into a repeatable platform. It makes the architecture explainable to engineers, customers, partners, executives, and future investors. It also creates a foundation for product expansion beyond any single locker deployment.
 
 The platform succeeds when field operations become boring in the best possible way: predictable, auditable, recoverable, supportable, and repeatable. This final strategic claim is summarized visually in **Figure 19**.
 
@@ -991,15 +997,19 @@ The platform succeeds when field operations become boring in the best possible w
 
 **Custody** — Governed responsibility for an asset, package, device, or compartment state.
 
+**Deployment** — A configured instance of a product or licensed implementation for a customer, site, workflow, hardware set, and operating policy.
+
 **Diagram Placeholder** — A manuscript note defining the intent, content, and caption for a future professional figure.
 
 **Edge Node** — A deployed kiosk, locker bank controller, or other field system executing physical operations.
 
-**EPAS** — Edge Platform Architecture Specification.
+**EPAS** — Edge Platform Architecture Specification; the reference architecture for the Toren Edge Platform.
 
 **Figure Register** — The numbered list of figures used to coordinate manuscript text, diagram production, Canva design work, and final publication layout.
 
 **Hardware Abstraction** — Platform layer that isolates device-specific communication from workflow and business logic.
+
+**Licensee** — A company or business entity authorized to implement, commercialize, manufacture, sell, operate, or distribute a product or deployment based on EPAS.
 
 **Locker Bank** — A physical group of controlled compartments governed by the platform.
 
@@ -1007,9 +1017,13 @@ The platform succeeds when field operations become boring in the best possible w
 
 **Platform Technology** — A durable architectural responsibility within the Edge Platform.
 
+**Product** — A packaged or branded expression of the Toren Edge Platform.
+
 **Reconciliation** — The process of resolving differences between local physical-edge records and backend enterprise records.
 
-**SmartLocker** — A product expression of the Edge Platform.
+**Toren** — The company, platform owner, and licensor associated with the Toren Edge Platform.
+
+**Toren Edge Platform** — The platform governed by EPAS for configurable, recoverable, auditable, hardware-adaptable physical-edge transaction execution.
 
 **Transaction Journal** — Durable local record of transaction progress used for recovery, audit, and reconciliation.
 
@@ -1090,4 +1104,3 @@ This appendix is a working register for connecting EPAS architecture to implemen
 | Local persistence | SQLite schema, configuration records, locker bank records, journal records | Supports durable local operational memory. |
 | Administrative services | Admin diagnostics, locker status review, controller tests, recovery tools | Supports governed support and recovery. |
 | Deployment architecture | Installer package, app settings, runtime dependencies, hardware drivers, support export | Supports repeatable deployment and supportability. |
-
