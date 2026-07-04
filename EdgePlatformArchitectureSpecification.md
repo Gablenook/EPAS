@@ -1,6 +1,6 @@
 # Edge Platform™ Architecture Specification (EPAS)
 
-**Version 1.2 – Authoritative Working Draft**  
+**Version 1.3 – Authoritative Working Draft**  
 **Repository:** `Gablenook/EPAS`  
 **Document:** `EdgePlatformArchitectureSpecification.md`  
 **Status:** Master manuscript / active architecture specification  
@@ -21,6 +21,7 @@ This document is the authoritative master manuscript for the Edge Platform Archi
 | 1.0 | 2026-07-02 | Master manuscript established as the authoritative EPAS architecture specification. |
 | 1.1 | 2026-07-03 | Began structured manuscript edit: strengthened document governance, platform thesis, standard chapter pattern, responsibility boundaries, and implementation-alignment language. |
 | 1.2 | 2026-07-03 | Aligned manuscript naming around Toren ownership, EPAS as the platform reference architecture, and generic licensed product/deployment language. |
+| 1.3 | 2026-07-03 | Expanded Chapter 1 to define the platform vision, problem addressed, commercial hierarchy, operating domain, naming independence, and chapter boundary. |
 
 ### Editing Rule
 
@@ -143,10 +144,12 @@ This thesis has four consequences:
 
 The Toren Edge Platform exists to make physical operations trustworthy, repeatable, configurable, and commercially reusable. It is intended for systems where software is responsible for authorizing, controlling, recording, and reconciling physical actions. **Figure 1** shows the broad operating context in which EPAS applies.
 
+The platform is not limited to one product, cabinet type, locker manufacturer, customer deployment, or workflow family. It is a reusable architecture for connecting business authority to local physical execution while preserving a durable account of what happened at the edge.
+
 Examples include:
 
 - A worker checking out a serialized device.
-- A technician staging equipment into a locker compartment.
+- A technician staging equipment into a controlled compartment.
 - A customer retrieving a package.
 - A government user accessing controlled equipment.
 - A field employee returning a defective asset.
@@ -156,10 +159,18 @@ In each case, the system must answer four questions with confidence:
 
 1. Who performed the action?
 2. What object or asset was involved?
-3. What physical compartment or device was used?
+3. What physical compartment, device, or custody location was used?
 4. What evidence proves the transaction occurred?
 
-## 1.2 Platform, Product, Licensee, and Deployment
+## 1.2 Problem Addressed
+
+Many physical-edge systems begin as single-purpose applications. A screen is built for one workflow, a relay board is wired for one device, a backend call is shaped around one customer, and local storage is added only when a problem appears in the field. That approach may produce a working installation, but it does not automatically produce a repeatable platform.
+
+EPAS addresses the gap between a functioning edge product and a governed edge platform. It defines the architecture needed when local devices, physical compartments, credentials, backend authority, operators, administrators, audit records, and recovery paths must behave as one system.
+
+The central problem is not simply opening a compartment. The central problem is preserving operational truth when a physical action occurs under software control. Once a door opens, a relay fires, a credential is accepted, or an asset is placed into custody, the edge system must be able to explain what happened even if the network fails, the operator leaves, the backend rejects a later acknowledgement, or a support technician must recover the transaction.
+
+## 1.3 Platform, Product, Licensee, and Deployment
 
 EPAS distinguishes between four levels of design and commercialization:
 
@@ -168,7 +179,18 @@ EPAS distinguishes between four levels of design and commercialization:
 - **Licensee:** A company or business entity authorized to implement, commercialize, manufacture, sell, operate, or distribute a product or deployment based on EPAS.
 - **Deployment:** A configured instance of a product or licensed implementation for a customer, site, workflow, hardware set, and operating policy.
 
-This distinction is fundamental. Product features should strengthen the platform whenever possible. Deployment-specific behavior should be expressed through configuration rather than source-code forks. Licensee or manufacturer-specific language should not be allowed to redefine the platform architecture. **Figure 2** should be used whenever EPAS is explained to a business, engineering, legal, investor, or partner audience because it prevents confusion between the platform, the product, the licensee, and any one customer installation.
+This distinction is fundamental. Product features should strengthen the platform whenever possible. Deployment-specific behavior should be expressed through configuration rather than source-code forks. Licensee, manufacturer, customer, or product-specific language should not be allowed to redefine the platform architecture.
+
+The practical consequence is that EPAS must be written from the platform downward:
+
+1. Toren owns and evolves the platform architecture.
+2. EPAS defines the reference architecture and vocabulary.
+3. Products package the platform for markets and use cases.
+4. Licensees or commercial partners may manufacture, sell, operate, or distribute platform-based products.
+5. Deployments configure the product for a specific customer, site, workflow, and hardware environment.
+6. Field learning from deployments should feed back into the platform rather than remain trapped as isolated customization.
+
+**Figure 2** should be used whenever EPAS is explained to a business, engineering, legal, investor, or partner audience because it prevents confusion between the platform, the product, the licensee, and any one customer installation.
 
 ## Figure 2 — Platform / Product / Deployment Hierarchy
 
@@ -176,7 +198,7 @@ This distinction is fundamental. Product features should strengthen the platform
 
 **Caption:** Figure 2 — EPAS governs the reusable Toren Edge Platform; products and licensees express the platform; deployments configure products for specific customers and sites.
 
-## 1.3 Architectural Goal
+## 1.4 Architectural Goal
 
 The architectural goal is not merely to open lockers. The goal is to create a governed edge execution environment where physical action, business authorization, local state, backend state, and audit evidence remain aligned.
 
@@ -186,14 +208,37 @@ The platform must be:
 - **Recoverable:** Interrupted transactions must be visible and reconcilable.
 - **Configurable:** Different workflows must be supported without architectural rewrites.
 - **Auditable:** Every important action must produce durable evidence.
-- **Hardware-independent:** The platform must support different scanners, readers, controllers, and compartment technologies.
+- **Hardware-independent:** The platform must support different scanners, readers, controllers, sensors, compartments, and future physical-control technologies.
 - **Commercially reusable:** Each customer deployment should improve the platform rather than create isolated custom code.
+- **Licensable:** The architecture should be clear enough that products, licensees, and partners can implement it without redefining it.
+- **Defensible:** The vocabulary, boundaries, and implementation evidence should support Toren's commercial and intellectual-property position.
 
-## 1.4 Product Naming and Brand Independence
+## 1.5 Operating Domain
+
+EPAS applies where software governs a physical action that has business, custody, audit, or security meaning. The platform is most valuable when all of the following conditions exist:
+
+- A human, system, or service actor requests an action.
+- A credential, reference, asset, package, work order, device, or custody object must be validated.
+- A physical device or compartment must be controlled locally.
+- Local state must remain meaningful even when enterprise connectivity is imperfect.
+- Backend systems must receive acknowledgement or reconciliation evidence.
+- Administrative recovery must be possible without bypassing governance.
+
+This domain includes locker-based custody, controlled equipment access, serialized device exchange, package movement, field asset staging, inventory-controlled release, return workflows, defect workflows, and other governed physical-edge transactions.
+
+## 1.6 Product Naming and Brand Independence
 
 EPAS intentionally separates platform language from product, customer, manufacturer, and licensee names. Toren is the platform owner and licensor. EPAS is the platform reference architecture. Products, licensees, manufacturers, customer-specific kiosks, and future branded systems may all express the platform, but they should not define the architecture.
 
 A product name may carry market identity, but the platform vocabulary carries engineering, commercial, licensing, and intellectual-property continuity.
+
+For that reason, the master manuscript should avoid product-specific naming unless the reference is needed for implementation evidence, licensee context, customer history, or legal/commercial analysis. Even then, product-specific references should be framed as examples of platform expression rather than definitions of platform scope.
+
+## 1.7 Chapter Boundary
+
+Chapter 1 owns the platform vision and the distinction among Toren, EPAS, the Edge Platform, products, licensees, and deployments. It does not define the detailed responsibilities of each Platform Technology. Those responsibilities begin in Chapter 3 and are expanded in the individual Platform Technology chapters.
+
+Chapter 1 should therefore remain stable as the commercial and architectural framing chapter. When later chapters add technical detail, they should reinforce this platform-first framing rather than redefine it.
 
 ---
 
