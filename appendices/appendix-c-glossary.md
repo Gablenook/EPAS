@@ -17,6 +17,8 @@ This glossary defines the core vocabulary used across EPAS. These terms should b
 
 **Administrative Services** — Platform Technology providing governed support, diagnostics, manual tests, recovery, reconciliation, and administrative review.
 
+**API** — Application programming interface used for explicit edge-to-backend communication, including validation, authorization, acknowledgement, reconciliation, configuration sync, and audit exchange.
+
 **Backend Integration** — Platform Technology responsible for API contracts, validation, authorization, ACK, reconciliation, configuration sync, and enterprise communication.
 
 **Commissioning** — The process of assigning identity, configuration, hardware mapping, and initial state to an edge node.
@@ -37,6 +39,8 @@ This glossary defines the core vocabulary used across EPAS. These terms should b
 
 **Diagram Placeholder** — A manuscript note defining the intent, content, and caption for a future professional figure.
 
+**DTO** — Data transfer object used to carry structured request, response, acknowledgement, or reconciliation data across service boundaries.
+
 **Edge Node** — A deployed kiosk, locker bank controller, or other field system executing physical operations.
 
 **EPAS** — Edge Platform Architecture Specification; the reference architecture for the Toren Edge Platform.
@@ -44,6 +48,10 @@ This glossary defines the core vocabulary used across EPAS. These terms should b
 **Figure Register** — The numbered list of figures used to coordinate manuscript text, diagram production, Canva design work, and final publication layout.
 
 **Hardware Abstraction** — Platform layer that isolates device-specific communication from workflow and business logic.
+
+**ID** — Identifier. Use uppercase ID in formal EPAS terminology, for example Actor ID, Request ID, Transaction ID, Correlation ID, Kiosk ID, and Locker Bank ID.
+
+**IP** — Intellectual property. Use uppercase IP when referring to intellectual-property strategy, evidence, defensibility, or review.
 
 **Licensee** — A company or business entity authorized to implement, commercialize, manufacture, sell, operate, or distribute a product or deployment based on EPAS.
 
