@@ -1,10 +1,29 @@
 # Edge Platform™ Architecture Specification (EPAS)
 
-**Version 1.0 – Authoritative Working Draft**  
+**Version 1.1 – Authoritative Working Draft**  
 **Repository:** `Gablenook/EPAS`  
-**Document:** `EdgePlatformArchitectureSpecification.md`
+**Document:** `EdgePlatformArchitectureSpecification.md`  
+**Status:** Master manuscript / active architecture specification  
+**Revision Date:** 2026-07-03
 
-> EPAS defines the Edge Platform architecture: the durable engineering foundation for governed physical-edge systems such as SmartLocker, asset custody kiosks, field-deployed device exchange systems, and other transaction-controlled edge operations.
+> EPAS defines the Edge Platform architecture: the durable engineering foundation for governed physical-edge systems such as SmartLocker, asset custody kiosks, field-deployed device exchange systems, package exchange systems, and other transaction-controlled edge operations.
+
+---
+
+## Document Control
+
+This document is the authoritative master manuscript for the Edge Platform Architecture Specification. It should be updated directly as the platform architecture matures. Separate slide decks, executive briefs, legal summaries, patent working notes, implementation tickets, customer proposals, and training materials may derive from this manuscript, but they should not replace it.
+
+### Revision History
+
+| Version | Date | Description |
+| --- | --- | --- |
+| 1.0 | 2026-07-02 | Master manuscript established as the authoritative EPAS architecture specification. |
+| 1.1 | 2026-07-03 | Began structured manuscript edit: strengthened document governance, platform thesis, standard chapter pattern, responsibility boundaries, and implementation-alignment language. |
+
+### Editing Rule
+
+When architectural language, figures, vocabulary, or technology boundaries change, update this master manuscript first. Downstream documents should be regenerated, revised, or cross-checked against this file.
 
 ---
 
@@ -39,6 +58,8 @@
 - Appendix B — Core Architectural Principles
 - Appendix C — Glossary
 - Appendix D — Figure Production Notes
+- Appendix E — Chapter Specification Pattern
+- Appendix F — Implementation Evidence Register
 
 ---
 
@@ -61,6 +82,17 @@ The platform is built around a simple but powerful division of responsibility:
 The central claim of EPAS is that edge systems should not be treated as thin user interfaces attached to cloud software. Physical edge execution has its own responsibilities. Doors open locally. Credentials are scanned locally. Relays fire locally. Compartments become occupied or vacant locally. Operators need immediate feedback locally. When the network is slow, interrupted, or unavailable, the platform must still preserve an accurate account of what happened.
 
 EPAS therefore describes a platform-first architecture rather than a single-purpose application. It establishes the rules, technologies, boundaries, and responsibilities needed to build repeatable edge products from a common foundation. The visual structure of this argument is introduced in **Figure 1** and expanded through the remaining figures.
+
+### Executive Thesis
+
+The Edge Platform creates commercial and technical leverage by converting one-off physical-edge applications into governed, configurable, recoverable, hardware-adaptable platform deployments. Its value is not merely that it opens a locker or validates an asset. Its value is that it defines a repeatable pattern for connecting business authority to local physical execution while preserving operational truth.
+
+This thesis has four consequences:
+
+1. **The platform must own edge execution.** Backend systems may authorize and record business state, but the local platform must own the truth of physical events it performs.
+2. **The platform must be configurable before it is customized.** Customer-specific workflows should be expressed through workflow definitions, validation profiles, and policy configuration whenever practical.
+3. **The platform must remain recoverable.** Every critical physical transaction must have a durable journal, terminal state, or reconciliation path.
+4. **The platform must become commercially reusable.** Each deployment should improve the common platform rather than create another isolated custom solution.
 
 ---
 
@@ -151,6 +183,12 @@ The platform must be:
 - **Hardware-independent:** The platform must support different scanners, readers, controllers, and compartment technologies.
 - **Commercially reusable:** Each customer deployment should improve the platform rather than create isolated custom code.
 
+## 1.4 Product Naming and Brand Independence
+
+EPAS intentionally separates platform language from product and customer names. SmartLocker, Toren, customer-specific kiosks, and future branded products may all express the platform. The architecture should therefore use stable platform vocabulary that survives product naming changes.
+
+A product name may carry market identity, but the platform vocabulary carries engineering and intellectual-property continuity.
+
 ---
 
 # Chapter 2 — Architectural Principles
@@ -201,6 +239,22 @@ SmartLocker is an implementation of the Edge Platform. Engineering investment sh
 
 Product-specific names, screens, labels, and workflows may vary. The platform responsibilities should remain stable.
 
+## 2.8 Principle 7 — No Physical Action Without Transaction Context
+
+Every governed physical action must be connected to an explicit transaction context before the action occurs. The platform should know the actor, workflow, requested action, target compartment, correlation identifiers, and expected acknowledgement path before a relay is commanded or a compartment is opened.
+
+## 2.9 Principle 8 — Local Truth Must Be Durable
+
+The edge node must preserve a durable account of physical actions because it is the system closest to the physical event. Backend records may later become authoritative for enterprise reporting, but they cannot replace the local record of what physically occurred.
+
+## 2.10 Principle 9 — Backend Authority Must Be Explicit
+
+Backend calls must carry explicit identity and context. Silent assumptions about kiosk identity, locker bank identity, workflow key, workflow action, actor identity, or request correlation create fragile systems.
+
+## 2.11 Principle 10 — Administrative Actions Must Be Governed
+
+Administrative actions are not exceptions to governance. Manual tests, overrides, recoveries, and out-of-service changes must be permissioned, logged, and explainable.
+
 ---
 
 # Chapter 3 — Platform Technology Architecture
@@ -231,10 +285,32 @@ The first-generation Edge Platform includes the following technologies:
 10. **Security Architecture** — Protects credentials, identities, device permissions, and operational boundaries. See **Figure 13**.
 11. **Administrative Services** — Enables local support, diagnostics, override workflows, commissioning review, and reconciliation. See **Figure 14**.
 12. **Deployment Architecture** — Defines how platform software is packaged, configured, installed, upgraded, and supported. See **Figure 15**.
+13. **Commercial Architecture** — Converts engineering structure into repeatable deployment value, defensible platform language, and product-family leverage. See **Figure 16**.
 
 ## 3.3 Technology Boundaries
 
 Each Platform Technology should expose interfaces that are stable enough for other services to depend on, but narrow enough to prevent responsibility leakage. For example, the workflow engine should not directly manipulate relay boards. The hardware layer should not decide whether an asset may be checked out. Backend integration should not own local door-state truth.
+
+## 3.4 Standard Platform Technology Specification Pattern
+
+Each Platform Technology chapter should eventually be expanded using the same specification pattern:
+
+- Purpose.
+- Problem addressed.
+- Primary responsibilities.
+- Boundaries and non-responsibilities.
+- Interfaces and collaborators.
+- Data ownership.
+- Operational model.
+- Failure modes.
+- Configuration model.
+- Security and audit considerations.
+- Commercial significance.
+- IP significance.
+- Related implementation evidence.
+- Related figures.
+
+This pattern is also captured in **Appendix E** so the manuscript can be expanded consistently without becoming a loose collection of technical notes.
 
 ---
 
@@ -277,6 +353,10 @@ A properly commissioned edge node should be able to:
 - Produce a commissioning audit record.
 
 Commissioning is not a one-time setup screen. It is a platform capability that directly affects operational trust. The commissioning sequence in **Figure 4** should therefore be treated as a governed platform workflow rather than informal setup labor.
+
+## 4.4 Boundary Rule
+
+Commissioning owns identity binding and initial configuration. It does not own live custody decisions, transaction recovery, or workflow authorization. Once a deployment is commissioned, runtime services use the commissioned configuration but remain responsible for live transaction behavior.
 
 ---
 
@@ -329,6 +409,10 @@ Workflow execution must be governed by platform services, not by ad hoc screen l
 
 Workflow configuration must be versioned, auditable, and testable. A deployment should be able to answer which workflow definition was active when a transaction occurred.
 
+## 5.4 Boundary Rule
+
+The workflow engine owns configured intent and step progression. It does not own hardware implementation, backend business authority, or custody-state truth. Those responsibilities belong to Hardware Abstraction, Backend Integration, and Custody Governance respectively.
+
 ---
 
 # Chapter 6 — Runtime Orchestration
@@ -365,6 +449,10 @@ This sequence is represented in **Figure 6**. Its journaled counterpart is shown
 ## 6.3 Runtime Rule
 
 No physical action should occur without a transaction context. No transaction context should disappear without a terminal state or recovery path.
+
+## 6.4 Boundary Rule
+
+Runtime Orchestration coordinates execution but should not absorb every implementation detail. It should call workflow, custody, hardware, persistence, backend, and audit services through explicit service boundaries. This protects the platform from becoming a single monolithic kiosk procedure.
 
 ---
 
@@ -411,6 +499,10 @@ Compartment state should include:
 - Door state if available.
 - Reservation expiration if applicable.
 - Last transaction reference.
+
+## 7.4 Boundary Rule
+
+Custody Governance owns valid custody semantics and transition rules. It does not own relay commands, scanner input, UI rendering, or external API transport. It collaborates with those technologies to keep physical state, business authorization, and audit evidence aligned.
 
 ---
 
@@ -465,6 +557,10 @@ These states should align with **Figure 8** and with the custody-state model sho
 
 Startup recovery must inspect incomplete transactions and move them toward a safe state. The platform should never rely on operator memory to reconstruct whether a door opened or an asset was staged.
 
+## 8.5 Boundary Rule
+
+Transaction Integrity owns durable transaction progress and recovery state. It does not decide business eligibility, does not select user-interface copy, and does not directly command hardware. It preserves the evidence needed to determine what happened and what must happen next.
+
 ---
 
 # Chapter 9 — Hardware Abstraction
@@ -500,6 +596,10 @@ Each hardware family should be represented through an adapter that exposes stabl
 
 The adapter owns device-specific details. Platform services own operational meaning. **Figure 9** should be used in engineering reviews to prevent hardware-specific code from leaking into workflow, custody, or backend-integration services.
 
+## 9.4 Boundary Rule
+
+Hardware Abstraction owns device communication and device health semantics. It does not decide whether a workflow is valid, whether an actor is authorized, or whether a custody transition is allowed.
+
 ---
 
 # Chapter 10 — Local Persistence
@@ -531,6 +631,10 @@ The local persistence model should include:
 ## 10.3 Persistence Principle
 
 Local persistence should be treated as operational truth for physical edge events until reconciliation proves otherwise. Backend systems remain authoritative for enterprise business records, but the edge platform remains authoritative for what it physically executed. **Figure 10** and **Figure 11** should be interpreted together.
+
+## 10.4 Boundary Rule
+
+Local Persistence owns durable storage of local platform state. It does not own the meaning of every stored state. Meaning is supplied by the Platform Technology that creates and consumes the record.
 
 ---
 
@@ -579,6 +683,14 @@ Every backend request should include enough identity and context for governance:
 ## 11.4 Integration Principle
 
 Backend integration should be explicit and observable. Silent assumptions about identity, workflow, actor, or action type create fragile systems. The explicit contract lane in **Figure 11** should become the reference point for API review.
+
+## 11.5 Implementation Alignment Note
+
+The current SmartLocker implementation evidence demonstrates why this contract matters. Stage, checkout, and ACK flows must propagate the active workflow key, workflow action, kiosk identity, locker bank identity, and actor identity through validation, authorization, local state update, acknowledgement, and recovery. Any missing identity field weakens governance because the backend cannot reliably distinguish which edge node, locker bank, actor, workflow, or action produced the physical event.
+
+## 11.6 Boundary Rule
+
+Backend Integration owns API transport, contracts, request/response interpretation, retry behavior, and backend communication observability. It does not own physical execution truth and should not erase local transaction evidence when a backend call fails.
 
 ---
 
@@ -939,3 +1051,43 @@ The first Canva executive deck should reuse a smaller subset of the figure regis
 ## D.3 Publication Rule
 
 Each finished figure should keep the figure number and caption from this manuscript unless the manuscript is deliberately renumbered. Canva graphics, Word/PDF editions, executive briefs, and presentation decks should use the same figure numbers wherever practical to preserve traceability.
+
+---
+
+# Appendix E — Chapter Specification Pattern
+
+Use this pattern when expanding any Platform Technology chapter:
+
+1. **Purpose** — Why the technology exists.
+2. **Problem Addressed** — What operational or commercial problem the technology solves.
+3. **Primary Responsibilities** — What the technology owns.
+4. **Boundaries and Non-Responsibilities** — What the technology must not own.
+5. **Interfaces and Collaborators** — Which other technologies it depends on or serves.
+6. **Data Ownership** — Which records, identifiers, states, or schemas it creates or governs.
+7. **Operational Model** — How it behaves during normal execution.
+8. **Failure Modes** — How it behaves when validation, hardware, storage, network, or operator behavior fails.
+9. **Configuration Model** — Which behavior should be configurable.
+10. **Security and Audit Considerations** — What must be protected, logged, or permissioned.
+11. **Commercial Significance** — How it improves reuse, supportability, deployment speed, or customer value.
+12. **IP Significance** — How it contributes to protectable vocabulary, architecture, method, or implementation evidence.
+13. **Related Implementation Evidence** — Code, DTOs, logs, database tables, services, or workflows that prove the concept exists.
+14. **Related Figures** — Figures that explain or summarize the technology.
+
+---
+
+# Appendix F — Implementation Evidence Register
+
+This appendix is a working register for connecting EPAS architecture to implementation evidence. It should be expanded as the codebase, logs, configuration files, and deployment artifacts mature.
+
+| Evidence Area | Candidate Implementation Evidence | EPAS Relevance |
+| --- | --- | --- |
+| Workflow configuration | Workflow definition JSON, workflow keys, workflow actions, validation profiles | Supports configuration-before-customization and workflow versioning. |
+| Runtime orchestration | Transaction execution services, screen progression, validation/authorization sequence | Supports governed physical-edge execution. |
+| Transaction integrity | Transaction journal table, recovery service, ACK retry records | Supports local-first recovery and operational trust. |
+| Custody governance | Locker status records, asset status transitions, defect handling | Supports custody-state model and reconciliation. |
+| Backend integration | Validate, authorize, ACK, reconcile DTOs and service methods | Supports explicit edge-to-backend contract. |
+| Hardware abstraction | Scanner service, reader adapter, locker controller service, controller branch mapping | Supports hardware independence and adapter principle. |
+| Local persistence | SQLite schema, configuration records, locker bank records, journal records | Supports durable local operational memory. |
+| Administrative services | Admin diagnostics, locker status review, controller tests, recovery tools | Supports governed support and recovery. |
+| Deployment architecture | Installer package, app settings, runtime dependencies, hardware drivers, support export | Supports repeatable deployment and supportability. |
+
