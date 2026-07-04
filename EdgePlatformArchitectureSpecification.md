@@ -1,6 +1,6 @@
 # Edge Platform™ Architecture Specification (EPAS)
 
-**Version 1.4 – Authoritative Working Draft**  
+**Version 1.5 – Authoritative Working Draft**  
 **Repository:** `Gablenook/EPAS`  
 **Document:** `EdgePlatformArchitectureSpecification.md`  
 **Status:** Master manuscript / active architecture specification  
@@ -23,6 +23,7 @@ This document is the authoritative master manuscript for the Edge Platform Archi
 | 1.2 | 2026-07-03 | Aligned manuscript naming around Toren ownership, EPAS as the platform reference architecture, and generic licensed product/deployment language. |
 | 1.3 | 2026-07-03 | Expanded Chapter 1 to define the platform vision, problem addressed, commercial hierarchy, operating domain, naming independence, and chapter boundary. |
 | 1.4 | 2026-07-03 | Expanded Chapter 2 to define governing architectural principles, principle application rules, and platform-level decision tests. |
+| 1.5 | 2026-07-03 | Expanded Chapter 3 to define the Platform Technology taxonomy, qualification criteria, collaboration model, ownership boundaries, and chapter-control role. |
 
 ### Editing Rule
 
@@ -394,39 +395,111 @@ When later chapters introduce implementation detail, the detail should be tested
 
 # Chapter 3 — Platform Technology Architecture
 
-## 3.1 Overview
+## 3.1 Purpose
 
-The platform is organized into Platform Technologies. A Platform Technology is a durable architectural responsibility with a clear owner, stable interfaces, and reusable value across deployments.
+Chapter 3 defines the Platform Technology architecture of the Toren Edge Platform. It converts the principles in Chapter 2 into a structured taxonomy of reusable platform responsibilities.
+
+A Platform Technology is not merely a software class, screen, service, database table, hardware device, or customer feature. It is a durable architectural responsibility with a clear owner, stable interfaces, reusable value across deployments, and enough commercial significance to strengthen the Toren platform rather than only solve one local implementation problem.
+
+Chapter 3 therefore acts as the bridge between the platform vision and the detailed Platform Technology chapters that follow.
+
+## 3.2 Problem Addressed
+
+Without a Platform Technology taxonomy, a physical-edge system tends to collapse into a monolithic kiosk application. Screen logic begins to own workflow decisions. Hardware adapters begin to imply business rules. Backend DTOs begin to define custody semantics. Local database tables begin to substitute for architecture. Administrative tools become informal bypasses. Product-specific urgency begins to override platform integrity.
+
+The Platform Technology architecture prevents that collapse by assigning each durable responsibility to an explicit architectural home. It gives engineering, commercial, legal, and implementation teams a shared map for discussing what the platform owns, what products package, what licensees may implement, and what deployments configure.
 
 ## Figure 3 — Platform Technology Map
 
-> **Diagram Placeholder:** Create a layered architecture map. Suggested center layer: Runtime Orchestration. Surround it with Configurable Workflow Engine, Custody Governance, Transaction Integrity, Hardware Abstraction, Local Persistence, Backend Integration, Security Architecture, Administrative Services, Cross-Cutting Services, Commissioning Technology, Deployment Architecture, and Commercial Architecture. Use boundary boxes to make responsibility separation obvious.
+> **Diagram Placeholder:** Create a layered architecture map. Suggested center layer: Runtime Orchestration. Surround it with Configurable Workflow Engine, Custody Governance, Transaction Integrity, Hardware Abstraction, Local Persistence, Backend Integration, Security Architecture, Administrative Services, Cross-Cutting Services, Commissioning Technology, Deployment Architecture, and Commercial Architecture. Use boundary boxes to make responsibility separation obvious. Include arrows showing that Runtime Orchestration coordinates but does not own all responsibilities, and that Cross-Cutting Services support all Platform Technologies.
 
-**Caption:** Figure 3 — The Edge Platform is composed of reusable Platform Technologies with explicit ownership and boundaries.
+**Caption:** Figure 3 — The Edge Platform is composed of reusable Platform Technologies with explicit ownership, boundaries, collaborators, and commercial significance.
 
-## 3.2 Core Platform Technologies
+## 3.3 Platform Technology Qualification Criteria
 
-The first-generation Edge Platform includes the following technologies:
+A capability should be treated as a Platform Technology when it satisfies most or all of the following criteria:
+
+- It represents a durable architectural responsibility rather than a temporary implementation detail.
+- It is reusable across more than one product, licensee, customer, workflow, hardware configuration, or deployment.
+- It has clear ownership and can define what it does not own.
+- It exposes stable interfaces or contracts to other parts of the platform.
+- It governs important data, state, configuration, identity, transaction, custody, hardware, audit, security, deployment, or commercial meaning.
+- It improves supportability, recoverability, repeatability, configurability, licensability, or intellectual-property clarity.
+- It can be documented, tested, evolved, and implemented without requiring the entire platform to be rewritten.
+
+A capability should not be elevated to Platform Technology status merely because it is complex, urgent, customer-requested, or difficult to implement. Complexity alone does not make something platform architecture. The test is whether the responsibility should become part of the reusable Toren Edge Platform.
+
+## 3.4 Core Platform Technologies
+
+The first-generation Edge Platform includes the following Platform Technologies:
 
 1. **Commissioning Technology** — Initializes site, kiosk, controller, locker bank, hardware, and local database identity. See **Figure 4**.
 2. **Configurable Workflow Engine** — Defines and executes customer workflows through configuration. See **Figure 5**.
 3. **Runtime Orchestration** — Coordinates credential scan, reference scan, validation, authorization, compartment assignment, hardware action, state update, ACK, and recovery. See **Figure 6**.
-4. **Custody Governance** — Governs asset, package, device, and compartment custody rules. See **Figure 7**.
+4. **Custody Governance** — Governs asset, package, device, compartment, actor, action, and custody-state rules. See **Figure 7**.
 5. **Transaction Integrity** — Journals every critical step and supports recovery after interruption. See **Figure 8**.
 6. **Hardware Abstraction** — Isolates device-specific behavior behind stable platform interfaces. See **Figure 9**.
-7. **Local Persistence** — Maintains local operational state, configuration, transaction records, and diagnostics. See **Figure 10**.
-8. **Backend Integration** — Communicates with enterprise APIs for validation, authorization, acknowledgement, and reconciliation. See **Figure 11**.
-9. **Cross-Cutting Services** — Provides logging, tracing, correlation IDs, error handling, telemetry, diagnostics, and service health. See **Figure 12**.
-10. **Security Architecture** — Protects credentials, identities, device permissions, and operational boundaries. See **Figure 13**.
-11. **Administrative Services** — Enables local support, diagnostics, override workflows, commissioning review, and reconciliation. See **Figure 14**.
-12. **Deployment Architecture** — Defines how platform software is packaged, configured, installed, upgraded, and supported. See **Figure 15**.
-13. **Commercial Architecture** — Converts engineering structure into repeatable deployment value, defensible platform language, and product-family leverage. See **Figure 16**.
+7. **Local Persistence** — Maintains local operational state, configuration, transaction records, audit references, and diagnostics. See **Figure 10**.
+8. **Backend Integration** — Communicates with enterprise APIs for validation, authorization, acknowledgement, reconciliation, audit ingestion, and configuration distribution. See **Figure 11**.
+9. **Cross-Cutting Services** — Provides logging, tracing, correlation IDs, error handling, telemetry, diagnostics, service health, time services, and serialization support. See **Figure 12**.
+10. **Security Architecture** — Protects credentials, identities, device permissions, administrative authority, backend trust, and operational boundaries. See **Figure 13**.
+11. **Administrative Services** — Enables local support, diagnostics, override workflows, commissioning review, transaction recovery, and reconciliation without bypassing governance. See **Figure 14**.
+12. **Deployment Architecture** — Defines how platform software is packaged, configured, installed, upgraded, rolled back, monitored, and supported. See **Figure 15**.
+13. **Commercial Architecture** — Converts engineering structure into repeatable deployment value, licensable platform language, defensible IP, product-family leverage, and field-learning reuse. See **Figure 16**.
 
-## 3.3 Technology Boundaries
+These technologies are not equal in runtime frequency, but they are equal in architectural importance. A deployment may use Runtime Orchestration every minute and Deployment Architecture only during installation, but both are necessary to make the platform repeatable and supportable.
 
-Each Platform Technology should expose interfaces that are stable enough for other services to depend on, but narrow enough to prevent responsibility leakage. For example, the workflow engine should not directly manipulate relay boards. The hardware layer should not decide whether an asset may be checked out. Backend integration should not own local door-state truth.
+## 3.5 Technology Boundaries
 
-## 3.4 Standard Platform Technology Specification Pattern
+Each Platform Technology should expose interfaces that are stable enough for other services to depend on, but narrow enough to prevent responsibility leakage.
+
+Examples:
+
+- The workflow engine should not directly manipulate relay boards.
+- The hardware abstraction layer should not decide whether an asset may be checked out.
+- Backend integration should not own local door-state truth.
+- Local persistence should not define the business meaning of every stored value.
+- Administrative tools should not bypass custody, security, or transaction integrity.
+- Runtime orchestration should coordinate the transaction without absorbing every platform responsibility.
+
+Boundaries are not paperwork. They are how the platform remains reusable. When a boundary leaks, future products, licensees, hardware configurations, and deployments become more expensive because behavior is trapped in the wrong architectural location.
+
+## 3.6 Collaboration Model
+
+Platform Technologies collaborate through explicit contracts, service boundaries, configuration, durable records, events, DTOs, adapters, or operational policies. Collaboration should preserve ownership.
+
+A typical governed transaction illustrates the collaboration model:
+
+1. The **Configurable Workflow Engine** defines the intended workflow and step sequence.
+2. **Runtime Orchestration** coordinates the live execution.
+3. **Security Architecture** and **Backend Integration** validate identity and authority.
+4. **Custody Governance** determines whether the requested custody action is valid.
+5. **Hardware Abstraction** commands the physical device or compartment.
+6. **Local Persistence** records local operational state.
+7. **Transaction Integrity** journals progress and recovery state.
+8. **Cross-Cutting Services** provide correlation, logging, diagnostics, and error classification.
+9. **Backend Integration** sends acknowledgement or reconciliation evidence.
+10. **Administrative Services** support recovery when normal execution cannot complete.
+
+The collaboration model should make it possible to trace a transaction from business intent to physical action to local evidence to backend acknowledgement.
+
+## 3.7 Ownership Model
+
+Each Platform Technology should define:
+
+- what it owns,
+- what it must not own,
+- what data or state it governs,
+- which technologies it collaborates with,
+- which contracts it exposes,
+- which failures it must handle,
+- which configuration it consumes,
+- which audit or diagnostic evidence it produces,
+- and how it contributes to platform reuse, licensing, supportability, or IP defensibility.
+
+The ownership model is summarized in **Appendix A — Platform Technology Responsibility Matrix** and expanded in each Platform Technology chapter.
+
+## 3.8 Platform Technology Specification Pattern
 
 Each Platform Technology chapter should eventually be expanded using the same specification pattern:
 
@@ -446,6 +519,26 @@ Each Platform Technology chapter should eventually be expanded using the same sp
 - Related figures.
 
 This pattern is also captured in **Appendix E** so the manuscript can be expanded consistently without becoming a loose collection of technical notes.
+
+## 3.9 Platform Technology Evolution
+
+The Platform Technology list should evolve deliberately. New technologies may be added when the platform discovers a reusable responsibility that is not adequately owned by the existing taxonomy.
+
+Candidate future technologies may include remote commissioning, camera evidence, predictive maintenance, plugin management, advanced reconciliation, mobile administration, environmental monitoring, cloud-managed workflow versioning, or AI-assisted diagnostics. These should be evaluated using the qualification criteria in Section 3.3 and the future roadmap in Chapter 17.
+
+A new technology should not be added merely to make the document appear broader. It should be added only when the responsibility has a stable architectural meaning and strengthens the Toren Edge Platform.
+
+## 3.10 Commercial and IP Significance
+
+The Platform Technology taxonomy is commercially significant because it converts implementation work into reusable platform assets. Each technology gives Toren a way to explain, license, defend, support, and extend the platform.
+
+The taxonomy also supports intellectual-property development by creating stable vocabulary around methods, boundaries, implementation evidence, and platform behavior. A product feature can be copied or replaced; a clearly documented platform architecture is harder to reduce to a one-off product description.
+
+## 3.11 Chapter Boundary
+
+Chapter 3 owns the Platform Technology taxonomy, qualification criteria, collaboration model, and ownership model. It does not define the full internal specification of each technology. Chapters 4 through 16 expand the individual technologies.
+
+When later chapters introduce detail, they should preserve the taxonomy established here. If a later chapter discovers a missing technology, the change should be made deliberately in Chapter 3 and Appendix A rather than implied indirectly in the body of another chapter.
 
 ---
 
