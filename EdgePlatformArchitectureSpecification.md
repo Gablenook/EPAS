@@ -1,6 +1,6 @@
 # Edge Platform™ Architecture Specification (EPAS)
 
-**Version 1.3 – Authoritative Working Draft**  
+**Version 1.4 – Authoritative Working Draft**  
 **Repository:** `Gablenook/EPAS`  
 **Document:** `EdgePlatformArchitectureSpecification.md`  
 **Status:** Master manuscript / active architecture specification  
@@ -22,6 +22,7 @@ This document is the authoritative master manuscript for the Edge Platform Archi
 | 1.1 | 2026-07-03 | Began structured manuscript edit: strengthened document governance, platform thesis, standard chapter pattern, responsibility boundaries, and implementation-alignment language. |
 | 1.2 | 2026-07-03 | Aligned manuscript naming around Toren ownership, EPAS as the platform reference architecture, and generic licensed product/deployment language. |
 | 1.3 | 2026-07-03 | Expanded Chapter 1 to define the platform vision, problem addressed, commercial hierarchy, operating domain, naming independence, and chapter boundary. |
+| 1.4 | 2026-07-03 | Expanded Chapter 2 to define governing architectural principles, principle application rules, and platform-level decision tests. |
 
 ### Editing Rule
 
@@ -246,9 +247,27 @@ Chapter 1 should therefore remain stable as the commercial and architectural fra
 
 ## 2.1 Purpose
 
-The Edge Platform is governed by a small set of architectural principles that remain constant regardless of programming language, operating system, deployment model, or hardware platform. These principles preserve architectural integrity as the platform evolves.
+The Edge Platform is governed by a small set of architectural principles that remain constant regardless of programming language, operating system, deployment model, hardware platform, licensee, customer, or product expression. These principles preserve architectural integrity as the platform evolves.
 
-## 2.2 Principle 1 — Single Ownership
+Chapter 2 defines the decision rules used to evaluate platform design, implementation changes, product extensions, customer-specific requests, licensee implementations, and future technical roadmap items. A proposed feature may be useful, but it should not be treated as platform architecture unless it can satisfy these principles.
+
+## 2.2 How the Principles Are Used
+
+The principles in this chapter are not abstract preferences. They are working constraints for engineering, commercialization, support, implementation, and intellectual-property development.
+
+They should be used to answer questions such as:
+
+- Does this capability belong in the reusable platform or in one product deployment?
+- Which Platform Technology owns the responsibility?
+- Is the behavior configured or hardcoded?
+- Is the physical action connected to an explicit transaction context?
+- Can the system recover and explain what happened after interruption?
+- Are backend assumptions explicit in the API contract?
+- Does the implementation strengthen Toren's platform position or create isolated custom work?
+
+When a design decision conflicts with one of these principles, the conflict should be documented as an architectural exception rather than hidden inside implementation code.
+
+## 2.3 Principle 1 — Single Ownership
 
 Every significant engineering responsibility has one architectural owner. Responsibility may be delegated for implementation, but ownership remains singular. This eliminates ambiguity, reduces duplication, and creates a clear place to improve each platform capability.
 
@@ -260,51 +279,116 @@ Examples:
 - The transaction journal owns durable transaction recovery.
 - Backend integration services own enterprise communication.
 
-## 2.3 Principle 2 — Separation of Responsibilities
+Single ownership does not mean isolation. Platform Technologies collaborate, but each collaboration should preserve a clear owner for the decision being made. For example, Runtime Orchestration may coordinate a transaction, but it should not silently become the owner of workflow definition, custody semantics, hardware protocol, backend contract, and audit retention.
 
-Business intent, runtime execution, custody, transaction integrity, hardware control, persistence, enterprise integration, and administration are intentionally separated into independent Platform Technologies. The separated technology boundaries are summarized visually in **Figure 3**.
+Decision test: if two services can independently change the same business meaning, custody rule, hardware command, or recovery state, the design violates single ownership.
+
+## 2.4 Principle 2 — Separation of Responsibilities
+
+Business intent, runtime execution, custody, transaction integrity, hardware control, persistence, enterprise integration, security, administration, deployment, and commercial reuse are intentionally separated into independent Platform Technologies. The separated technology boundaries are summarized visually in **Figure 3**.
 
 This separation prevents the kiosk user interface from becoming the owner of business rules, hardware details, backend contracts, and transaction recovery. The UI presents and collects information. Platform services govern execution.
 
-## 2.4 Principle 3 — Configuration Before Customization
+Separation also protects the platform commercially. When responsibilities are separated, a new product, licensee, customer workflow, controller device, scanner type, or backend system can be added without rewriting the entire application.
+
+Decision test: if a screen, adapter, backend DTO, or customer-specific workflow must know too much about unrelated platform behavior, a responsibility boundary is leaking.
+
+## 2.5 Principle 3 — Configuration Before Customization
 
 Deployments should differ through configuration before source-code customization. Customer-specific behavior should be expressed through workflow definitions, validation profiles, hardware mappings, site settings, and policy configuration whenever practical. **Figure 5** illustrates this principle by separating workflow definition from runtime execution.
 
-This principle makes the platform commercially scalable. It allows one product family to support Ryder-style asset workflows, Shaw-style equipment pickup, package workflows, staging workflows, and future custody use cases without fragmenting the codebase.
+This principle makes the platform commercially scalable. It allows one product family to support asset workflows, equipment pickup, package workflows, staging workflows, return workflows, defect workflows, and future custody use cases without fragmenting the codebase.
 
-## 2.5 Principle 4 — Deterministic Execution
+Configuration should be explicit, versioned, testable, and auditable. A deployment should be able to answer which workflow definition, validation profile, hardware mapping, and policy settings were active when a transaction occurred.
+
+Decision test: if adding a new customer, licensee, workflow label, validation rule, hardware mapping, or operating policy requires source-code branching before configuration has been evaluated, the design should be challenged.
+
+## 2.6 Principle 4 — Deterministic Execution
 
 Identical operational inputs should produce identical architectural behavior. Deterministic execution simplifies diagnostics, testing, certification, recovery, support, and long-term maintenance.
 
-Where external conditions vary, such as backend availability or hardware response timing, the platform must preserve deterministic local decisions and durable journal records. **Figure 8** shows how transaction journaling protects deterministic recovery.
+Where external conditions vary, such as backend availability, hardware response timing, operator behavior, or network latency, the platform must preserve deterministic local decisions and durable journal records. **Figure 8** shows how transaction journaling protects deterministic recovery.
 
-## 2.6 Principle 5 — Operational Trust
+Determinism is especially important at the physical edge because a relay command, door opening, credential scan, or custody transition cannot be treated as a reversible user-interface event. The platform should know why it acted and what state resulted.
+
+Decision test: if the same transaction inputs can produce materially different physical or custody outcomes without a documented configuration difference, external failure condition, or explicit exception path, the design is not deterministic enough.
+
+## 2.7 Principle 5 — Operational Trust
 
 The Edge Platform maintains trustworthy operational state even when enterprise connectivity is temporarily unavailable. Enterprise systems coordinate business operations; edge systems execute physical operations. The edge/backend responsibility split is shown in **Figure 11**.
 
 A physical door opening is not theoretical. Once it occurs, the edge system must record it, even if the backend cannot be reached at that moment.
 
-## 2.7 Principle 6 — Platform Before Product
+Operational trust requires that the platform can explain:
+
+- who or what initiated the action,
+- what was validated or authorized,
+- which physical device or compartment was used,
+- whether the physical action was attempted or completed,
+- what local state changed,
+- whether backend acknowledgement succeeded,
+- and what recovery or reconciliation path remains open.
+
+Decision test: if support personnel must rely on memory, guesswork, or informal notes to determine whether a physical event occurred, the platform has failed the operational trust principle.
+
+## 2.8 Principle 6 — Platform Before Product
 
 Specific products, licensee systems, customer deployments, and manufactured implementations may express the Toren Edge Platform, but EPAS remains independent of any single product name, manufacturer, customer, or licensee. Engineering investment should strengthen the common platform before adding product-specific capability. This relationship is established in **Figure 2** and extended commercially in **Figure 16**.
 
 Product-specific names, screens, labels, and workflows may vary. The platform responsibilities should remain stable.
 
-## 2.8 Principle 7 — No Physical Action Without Transaction Context
+This principle protects Toren's commercial position. A product can win a customer; the platform should create reusable capability, licensable architecture, implementation evidence, and future leverage.
+
+Decision test: if a product feature cannot be generalized, configured, reused, licensed, or learned from, it should be treated as deployment-specific work rather than platform architecture.
+
+## 2.9 Principle 7 — No Physical Action Without Transaction Context
 
 Every governed physical action must be connected to an explicit transaction context before the action occurs. The platform should know the actor, workflow, requested action, target compartment, correlation identifiers, and expected acknowledgement path before a relay is commanded or a compartment is opened.
 
-## 2.9 Principle 8 — Local Truth Must Be Durable
+The transaction context is the bridge between business authority and physical execution. It prevents the platform from performing hardware actions that cannot later be explained, acknowledged, audited, or reconciled.
+
+Decision test: if a relay can be fired, a compartment opened, a device released, or a custody state changed without a transaction identifier, actor or credential reference, workflow/action context, and audit path, the design violates this principle.
+
+## 2.10 Principle 8 — Local Truth Must Be Durable
 
 The edge node must preserve a durable account of physical actions because it is the system closest to the physical event. Backend records may later become authoritative for enterprise reporting, but they cannot replace the local record of what physically occurred.
 
-## 2.10 Principle 9 — Backend Authority Must Be Explicit
+Durable local truth includes transaction journal entries, locker or compartment state, workflow context, hardware action results, timestamps, error records, and acknowledgement/reconciliation status. Local persistence is not merely a cache; it is operational memory for physical events.
 
-Backend calls must carry explicit identity and context. Silent assumptions about kiosk identity, locker bank identity, workflow key, workflow action, actor identity, or request correlation create fragile systems.
+Decision test: if power loss, app restart, network failure, or operator abandonment can erase the evidence needed to determine what physical action occurred, the local truth model is insufficient.
 
-## 2.11 Principle 10 — Administrative Actions Must Be Governed
+## 2.11 Principle 9 — Backend Authority Must Be Explicit
 
-Administrative actions are not exceptions to governance. Manual tests, overrides, recoveries, and out-of-service changes must be permissioned, logged, and explainable.
+Backend calls must carry explicit identity and context. Silent assumptions about kiosk identity, locker bank identity, workflow key, workflow action, actor identity, request correlation, site identity, tenant identity, or action type create fragile systems.
+
+Backend authority should be visible in contracts. Validation, authorization, acknowledgement, reconciliation, configuration distribution, and audit ingestion should be reviewed for required identity fields and clear ownership of meaning.
+
+Decision test: if the backend must infer which kiosk, locker bank, workflow, actor, customer, or action produced a request from hidden state or naming convention, the contract is not explicit enough.
+
+## 2.12 Principle 10 — Administrative Actions Must Be Governed
+
+Administrative actions are not exceptions to governance. Manual tests, overrides, recoveries, out-of-service changes, configuration reviews, log exports, and reconciliation actions must be permissioned, logged, and explainable.
+
+The platform should support practical field administration, but administrative convenience must not become an untracked bypass around custody, transaction integrity, security, or audit evidence.
+
+Decision test: if an administrator can change physical state, operational state, configuration, transaction status, or reconciliation outcome without permissioning and durable audit evidence, the administrative model is incomplete.
+
+## 2.13 Principle Application Summary
+
+The principles work together as a control system:
+
+- **Single Ownership** and **Separation of Responsibilities** define architectural boundaries.
+- **Configuration Before Customization** and **Platform Before Product** protect reuse and commercial scalability.
+- **Deterministic Execution**, **No Physical Action Without Transaction Context**, and **Local Truth Must Be Durable** protect physical-edge correctness.
+- **Operational Trust**, **Backend Authority Must Be Explicit**, and **Administrative Actions Must Be Governed** protect supportability, auditability, and enterprise confidence.
+
+A design that satisfies only one principle may still be weak. For example, a feature may be configurable but not auditable, recoverable but not explicit, or commercially useful but architecturally leaky. Platform capability should be evaluated against the full principle set.
+
+## 2.14 Chapter Boundary
+
+Chapter 2 owns the governing principles used to judge platform decisions. It does not own the detailed Platform Technology taxonomy, which begins in Chapter 3. It does not own custody semantics, transaction states, backend contracts, or security controls except as principle-level requirements. Those details are expanded in the relevant chapters.
+
+When later chapters introduce implementation detail, the detail should be tested against Chapter 2 rather than redefining the principles locally.
 
 ---
 
