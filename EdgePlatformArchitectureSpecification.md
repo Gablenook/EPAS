@@ -1,6 +1,6 @@
 # Edge Platform™ Architecture Specification (EPAS)
 
-**Version 1.6 – Authoritative Working Draft**  
+**Version 1.7 – Authoritative Working Draft**  
 **Repository:** `Gablenook/EPAS`  
 **Document:** `EdgePlatformArchitectureSpecification.md`  
 **Status:** Master manuscript / active architecture specification  
@@ -25,6 +25,7 @@ This document is the authoritative master manuscript for the Edge Platform Archi
 | 1.4 | 2026-07-03 | Expanded Chapter 2 to define governing architectural principles, principle application rules, and platform-level decision tests. |
 | 1.5 | 2026-07-03 | Expanded Chapter 3 to define the Platform Technology taxonomy, qualification criteria, collaboration model, ownership boundaries, and chapter-control role. |
 | 1.6 | 2026-07-03 | Expanded Chapter 4 to define Commissioning Technology responsibilities, data ownership, operational model, failure modes, audit requirements, and platform significance. |
+| 1.7 | 2026-07-03 | Expanded Chapter 5 to define Configurable Workflow Engine responsibilities, workflow schema, execution model, versioning, failure modes, audit requirements, and platform significance. |
 
 ### Editing Rule
 
@@ -735,54 +736,211 @@ Commissioning owns identity binding, hardware topology, local initialization, ba
 
 ## 5.1 Purpose
 
-The workflow engine allows customer-specific operational behavior to be expressed as configuration. It defines the screens, steps, references, validations, authorizations, and action semantics used by a deployment.
+The Configurable Workflow Engine allows deployment-specific operational behavior to be expressed through governed configuration rather than source-code customization. It defines the workflow keys, workflow families, workflow actions, ordered steps, labels, prompts, validation profiles, authorization requirements, size-selection policies, exception options, and screen-flow semantics that guide a physical-edge transaction.
+
+The workflow engine is the Platform Technology that turns customer, licensee, product, and deployment variation into controlled configuration while preserving common runtime execution rules.
+
+## 5.2 Problem Addressed
+
+Physical-edge deployments often look different at the user level. One deployment may support package pickup. Another may support serialized device checkout. Another may support equipment staging, return, exchange, defect marking, controlled access, or inventory release. If each variation becomes a source-code branch, the platform fragments quickly.
+
+The Configurable Workflow Engine addresses this by separating configured intent from runtime execution. A deployment can define what workflow is being performed, what inputs are required, what labels should be shown, what validation profile applies, and what action is intended without changing the platform services that validate, authorize, assign compartments, command hardware, update local state, journal transactions, and send acknowledgements.
 
 ## Figure 5 — Configurable Workflow Model
 
-> **Diagram Placeholder:** Create a configuration-to-runtime diagram. Left side: workflow definition, validation profile, reference labels, action type, size policy, defect options, home button label. Center: workflow engine. Right side: runtime screens, validation calls, authorization request, locker assignment, physical action, and acknowledgement. Show that configuration changes behavior without source-code forks.
+> **Diagram Placeholder:** Create a configuration-to-runtime diagram. Left side: workflow definition, workflow key, workflow family, workflow action, ordered steps, validation profile, reference labels, size policy, defect or exception options, home button label, and authorization requirement. Center: Configurable Workflow Engine. Right side: runtime screens, validation request, authorization request, custody decision, compartment assignment, physical action, local state update, transaction journal, acknowledgement, and reconciliation. Show that configuration changes behavior while runtime services preserve common platform execution rules.
 
-**Caption:** Figure 5 — Workflow configuration defines customer-specific behavior while runtime services preserve common platform execution rules.
+**Caption:** Figure 5 — Workflow configuration expresses deployment-specific behavior while runtime services preserve governed platform execution.
 
-## 5.2 Workflow Model
+## 5.3 Primary Responsibilities
 
-A workflow definition should include:
+The Configurable Workflow Engine owns:
+
+- Workflow definition structure.
+- Workflow keys and stable workflow identifiers.
+- Workflow families or modes.
+- Workflow actions such as pickup, stage, checkout, return, exchange, deposit, retrieve, release, or inspect.
+- Ordered workflow steps.
+- Step requirements and step progression rules.
+- User-facing workflow labels and prompts where they are configuration-driven.
+- Reference labels and required input types.
+- Validation profile selection.
+- Authorization requirement flags.
+- Size-selection policy.
+- Defect, exception, condition, or disposition options where applicable.
+- Home-screen or workflow-entry labels.
+- Workflow versioning and configuration auditability.
+- Rules for determining whether a configured workflow is valid enough for runtime execution.
+
+The workflow engine must define intent clearly enough that Runtime Orchestration can execute the workflow without guessing what business action is being requested.
+
+## 5.4 Boundaries and Non-Responsibilities
+
+The workflow engine owns configured intent and step progression. It does not own hardware implementation, backend business authority, custody-state truth, transaction recovery, security policy, or local persistence mechanics.
+
+Boundary examples:
+
+- The workflow engine may define that a workflow action is `checkout`; Custody Governance determines whether the checkout transition is valid.
+- The workflow engine may specify that backend authorization is required; Backend Integration owns the API contract and response handling.
+- The workflow engine may define that a compartment size should be selected; Runtime Orchestration and assignment services coordinate the actual selection.
+- The workflow engine may define a scanner input step; Hardware Abstraction owns scanner behavior.
+- The workflow engine may expose labels and prompts; the UI renders them but should not redefine workflow meaning.
+- The workflow engine may identify exception options; Transaction Integrity and Custody Governance preserve the resulting evidence and state transitions.
+
+## 5.5 Interfaces and Collaborators
+
+The Configurable Workflow Engine collaborates with:
+
+- **Runtime Orchestration** to provide the active workflow definition, current step, required inputs, and action semantics.
+- **Backend Integration** to select validation profiles, authorization requirements, request context, and acknowledgement meaning.
+- **Custody Governance** to connect workflow action to valid custody transitions.
+- **Hardware Abstraction** to express required input or physical action without embedding device protocol.
+- **Local Persistence** to cache workflow definitions, workflow versions, active configuration, and deployment-specific workflow settings.
+- **Security Architecture** to ensure workflows cannot grant authority outside configured permissions.
+- **Administrative Services** to inspect, test, enable, disable, review, or correct workflow configuration.
+- **Cross-Cutting Services** to log workflow selection, correlation identifiers, configuration version, and diagnostic information.
+- **Commercial Architecture** to preserve reusable product-family behavior across customer and licensee deployments.
+
+The workflow engine should expose workflow meaning through explicit configuration objects, not through scattered screen logic or naming conventions.
+
+## 5.6 Data Ownership
+
+The Configurable Workflow Engine governs data categories such as:
 
 - Workflow key.
+- Workflow display name.
+- Workflow family or mode.
+- Workflow action.
+- Workflow version or revision.
+- Ordered step list.
+- Required and optional input definitions.
+- Reference labels and prompt text.
+- Validation profile name or identifier.
+- Authorization requirement flags.
+- Size-selection and assignment policy references.
+- Defect, condition, exception, or disposition option sets.
+- Home-screen labels and workflow-entry metadata.
+- Enabled/disabled workflow state.
+- Deployment or tenant workflow selection.
+
+The workflow engine owns workflow definition and configured intent. It does not own the final custody record, transaction journal record, hardware result, backend business record, or audit retention policy, even though those records should include workflow context.
+
+## 5.7 Operational Model
+
+A typical workflow execution model includes:
+
+1. Load enabled workflow definitions for the deployment.
+2. Select the workflow from home-screen, policy, role, credential, reference type, or administrative context.
+3. Validate that the workflow definition is complete and compatible with the platform version.
+4. Initialize runtime context with workflow key, workflow family, workflow action, version, and correlation identifiers.
+5. Present the configured first step or input requirement.
+6. Collect credential, reference, asset, package, device, work order, or other configured input.
+7. Apply the configured validation profile.
+8. Apply authorization requirement rules.
+9. Provide action semantics to Runtime Orchestration and Custody Governance.
+10. Advance through configured steps deterministically.
+11. Preserve workflow context in local state, transaction journal, backend requests, audit evidence, and acknowledgement.
+12. End in a terminal, failed, abandoned, or reconciliation-required state.
+
+The operational model should make workflow variation visible and inspectable while keeping physical execution governed by common platform services.
+
+## 5.8 Failure Modes
+
+Workflow configuration failures can create serious operational ambiguity if they are discovered only during a live transaction.
+
+Representative failure modes include:
+
+- Missing workflow key.
+- Duplicate workflow key.
+- Invalid workflow action.
+- Unsupported workflow family or mode.
+- Missing required step.
+- Step order incompatible with runtime execution.
+- Validation profile missing or incompatible.
+- Authorization requirement unclear.
+- Reference label or input definition missing.
+- Size-selection policy conflicts with available compartments.
+- Exception option configured without custody or audit meaning.
+- Workflow definition incompatible with platform version.
+- Workflow cached locally but stale relative to backend or deployment policy.
+- Workflow enabled for a role, tenant, site, or product context where it should not be available.
+
+Failure handling should prevent ambiguous physical action. If the workflow definition cannot clearly express the intended action, required inputs, validation path, and acknowledgement context, Runtime Orchestration should not proceed with a governed physical transaction.
+
+## 5.9 Configuration Model
+
+Workflow configuration should be explicit, versioned, testable, and auditable.
+
+A workflow definition should include, at minimum:
+
+- Stable workflow key.
 - Display name.
 - Workflow family or mode.
 - Workflow action.
 - Ordered steps.
+- Required input definitions.
 - Reference labels.
 - Validation profile.
-- Size-selection policy.
-- Home-screen label.
-- Defect or exception options where applicable.
+- Authorization requirement policy.
+- Size-selection policy where applicable.
+- Exception, defect, or disposition options where applicable.
+- Home-screen label or entry metadata.
+- Enabled/disabled state.
+- Version, revision, timestamp, or deployment package identifier.
 
-Example workflow families include:
+Configuration should support customer and licensee variation without weakening platform governance. A workflow label may vary by deployment, but the workflow action and transaction meaning must remain stable enough for custody, audit, backend integration, and reconciliation.
 
-- `package_workflow`
-- `asset_workflow`
-- `equipment_workflow`
-- `inventory_workflow`
+## 5.10 Security and Audit Considerations
 
-Example workflow actions include:
+Workflow configuration affects what actions users can perform, what inputs are required, what validations are called, and what physical actions may follow. It must therefore be governed.
 
-- `pickup`
-- `stage`
-- `checkout`
-- `return`
-- `exchange`
-- `deposit`
+Security and audit requirements include:
 
-## 5.3 Workflow Execution Principles
+- Workflow configuration changes should be permissioned.
+- Enabled workflows should be reviewable by authorized administrators.
+- Workflow versions should be recorded or recoverable for transaction review.
+- Runtime transactions should record workflow key and workflow action.
+- Backend validation and authorization requests should include workflow context.
+- Workflow shortcuts should not bypass configured authority requirements.
+- Defect or exception options should produce durable evidence.
+- Disabled, incomplete, or incompatible workflows should not be available for live transactions.
 
-Workflow execution must be governed by platform services, not by ad hoc screen logic. The UI may display steps and collect input, but the runtime orchestration layer should decide what happens next. **Figure 5** shows how the configured workflow remains separate from the common runtime engine.
+The platform should be able to answer which workflow definition was active when a physical action occurred.
 
-Workflow configuration must be versioned, auditable, and testable. A deployment should be able to answer which workflow definition was active when a transaction occurred.
+## 5.11 Commercial Significance
 
-## 5.4 Boundary Rule
+The Configurable Workflow Engine is commercially significant because it allows Toren-based products and licensee deployments to support different use cases without creating separate applications. It turns customer variation into configuration rather than code fragmentation.
 
-The workflow engine owns configured intent and step progression. It does not own hardware implementation, backend business authority, or custody-state truth. Those responsibilities belong to Hardware Abstraction, Backend Integration, and Custody Governance respectively.
+This reduces implementation cost, improves supportability, increases licensing flexibility, and allows field learning from one deployment to strengthen the common platform. It also makes the platform easier to explain commercially: products may differ at the workflow level while still inheriting the same governed execution architecture.
+
+## 5.12 IP Significance
+
+The workflow engine contributes to Toren's intellectual-property position by defining a repeatable method for expressing physical-edge business intent as governed, versioned, auditable configuration connected to runtime execution, custody state, backend authority, hardware action, and transaction evidence.
+
+The protectable value is not merely configurable screens. The value is the controlled separation of workflow intent from runtime execution while preserving transaction context, custody meaning, and recovery evidence.
+
+## 5.13 Related Implementation Evidence
+
+Candidate implementation evidence may include:
+
+- Workflow definition JSON files or configuration records.
+- Workflow keys and workflow actions.
+- Workflow family or mode fields.
+- Validation profile configuration.
+- Home-screen workflow selection configuration.
+- Step lists and required input definitions.
+- Size-selection settings.
+- Defect or exception option definitions.
+- Runtime context carrying workflow key and workflow action.
+- Backend validation, authorization, and acknowledgement DTOs containing workflow context.
+- Audit or transaction journal records that preserve workflow version or workflow identity.
+- Administrative workflow review or enable/disable tools.
+
+This evidence should be expanded in Appendix F as the implementation matures.
+
+## 5.14 Boundary Rule
+
+The Configurable Workflow Engine owns configured workflow intent, step progression, workflow identity, workflow action semantics, and workflow variation. It does not own hardware implementation, backend business authority, custody-state truth, transaction recovery, local persistence mechanics, or security policy. Runtime services execute the configured workflow, but the workflow engine defines the intent that makes execution explainable.
 
 ---
 
