@@ -26,7 +26,7 @@ Use this pattern when expanding any Platform Technology chapter:
 11. **Commercial Significance** — How it improves reuse, supportability, deployment speed, customer value, or licensee scalability.
 12. **IP Significance** — How it contributes to protectable vocabulary, architecture, method, diagrams, or implementation evidence.
 13. **Related Implementation Evidence** — Code, DTOs, logs, database tables, services, workflows, configuration files, or support artifacts that prove the concept exists.
-14. **Related Figures** — Figures that explain or summarize the technology.
+14. **Related Figures** — Figures that explain or summarize the technology. The chapter's primary figure header satisfies this requirement unless the chapter references additional figures that need to be listed separately.
 15. **Boundary Rule** — A final compact statement of what the technology owns and must not absorb.
 
 ## E.3 Editing Guidance
@@ -52,8 +52,9 @@ Before a chapter expansion is considered complete, verify:
 - Failure modes are explicit.
 - Security and audit implications are included.
 - Commercial and IP significance are included.
+- The chapter's primary figure header is present, and any additional related figures are listed where needed.
 - The final Boundary Rule is present.
 
 ## E.5 Assembly Rule
 
-When the manuscript is reassembled from chapter files, this appendix should be used to identify chapters that are incomplete, inconsistent, or missing the final boundary rule.
+When the manuscript is reassembled from chapter files, this appendix should be used to identify chapters that are incomplete, inconsistent, missing a primary figure reference, or missing the final boundary rule.
