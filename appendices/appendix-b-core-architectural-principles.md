@@ -17,7 +17,7 @@ This appendix provides a compact reference for the core architectural principles
 4. **Deterministic Execution** — The same operational inputs should produce the same platform behavior unless a documented exception applies.
 5. **Operational Trust** — The edge platform must preserve trustworthy local state when networks, devices, or workflows fail.
 6. **Platform Before Product** — Products, licensees, and customer deployments express the platform; they do not define it.
-7. **Transaction Context Before Governed Action** — Governed edge actions must be tied to explicit transaction context.
+7. **No Physical Action Without Transaction Context** — Governed physical-edge actions must be tied to explicit transaction context.
 8. **Local Truth Must Be Durable** — The edge node must preserve durable evidence of local events.
 9. **Backend Authority Must Be Explicit** — Backend calls must carry explicit identity, workflow, actor, request, and correlation context.
 10. **Administrative Actions Must Be Governed** — Manual tests, overrides, recovery, reconciliation, and correction must be permissioned, logged, and explainable.
