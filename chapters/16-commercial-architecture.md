@@ -60,7 +60,7 @@ Commercial Architecture explains platform value but does not own implementation 
 
 Boundary examples:
 
-- It explains why workflows should be configurable; the Workflow Engine owns workflow configuration.
+- It explains why workflows should be configurable; the Configurable Workflow Engine owns workflow configuration.
 - It explains why supportability matters; Administrative and Cross-Cutting Services implement supportability.
 - It explains why IP matters; IP Strategy owns protectable concepts and evidence mapping.
 - It explains why deployment repeatability matters; Deployment Architecture owns installation and upgrade model.
