@@ -75,14 +75,27 @@ def verify_inputs() -> None:
         raise RuntimeError(f"Expected 19 unique figure references, found {len(set(figure_refs))}")
 
 
+def insert_break_before_heading(text: str, heading: str) -> str:
+    """Insert one Word page break before a specific Markdown heading."""
+    return text.replace(f"\n{heading}", f"\n{WORD_PAGE_BREAK}\n\n{heading}", 1)
+
+
 def add_word_page_breaks(text: str) -> str:
     """Insert reliable DOCX page breaks before major manuscript divisions."""
 
     # Remove horizontal rules immediately before major divisions when those divisions
     # will receive a real page break. This avoids a floating line at the top/bottom
     # of pages while preserving horizontal rules elsewhere in the manuscript.
+    text = re.sub(r"\n---\n\n(?=## Executive Summary)", "\n\n", text)
+    text = re.sub(r"\n---\n\n(?=## List of Figures)", "\n\n", text)
+    text = re.sub(r"\n---\n\n(?=## Figure 1)", "\n\n", text)
     text = re.sub(r"\n---\n\n(?=# Part )", "\n\n", text)
     text = re.sub(r"\n---\n\n(?=# Chapter )", "\n\n", text)
+
+    # Front matter should feel intentionally separated in the publication DOCX.
+    text = insert_break_before_heading(text, "## Executive Summary")
+    text = insert_break_before_heading(text, "## List of Figures")
+    text = insert_break_before_heading(text, "## Figure 1 — Edge Platform Context Model")
 
     # Start major parts and chapters on new Word pages.
     text = re.sub(r"\n(?=# Part )", f"\n{WORD_PAGE_BREAK}\n\n", text)
