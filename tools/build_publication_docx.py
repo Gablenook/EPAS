@@ -27,6 +27,10 @@ WORKING_MD = BUILD_DIR / "EPAS-v2.0-publication-draft.word.md"
 OUTPUT_DOCX = BUILD_DIR / "EPAS-v2.0-publication-draft.docx"
 FIGURE_DIR = ROOT / "figures" / "png"
 
+# Native WordprocessingML page break. This is more reliable for DOCX output
+# than LaTeX-style \newpage, which Pandoc may not preserve consistently in Word.
+WORD_PAGE_BREAK = '<w:p><w:r><w:br w:type="page"/></w:r></w:p>'
+
 EXPECTED_FIGURES = [
     "figure-01-edge-platform-context-model.png",
     "figure-02-platform-product-deployment-hierarchy.png",
@@ -71,6 +75,25 @@ def verify_inputs() -> None:
         raise RuntimeError(f"Expected 19 unique figure references, found {len(set(figure_refs))}")
 
 
+def add_word_page_breaks(text: str) -> str:
+    """Insert reliable DOCX page breaks before major manuscript divisions."""
+
+    # Remove horizontal rules immediately before major divisions when those divisions
+    # will receive a real page break. This avoids a floating line at the top/bottom
+    # of pages while preserving horizontal rules elsewhere in the manuscript.
+    text = re.sub(r"\n---\n\n(?=# Part )", "\n\n", text)
+    text = re.sub(r"\n---\n\n(?=# Chapter )", "\n\n", text)
+
+    # Start major parts and chapters on new Word pages.
+    text = re.sub(r"\n(?=# Part )", f"\n{WORD_PAGE_BREAK}\n\n", text)
+    text = re.sub(r"\n(?=# Chapter )", f"\n{WORD_PAGE_BREAK}\n\n", text)
+
+    # Start appendices on a new page.
+    text = text.replace("\n## Appendix A", f"\n{WORD_PAGE_BREAK}\n\n## Appendix A")
+
+    return text
+
+
 def prepare_markdown() -> None:
     BUILD_DIR.mkdir(exist_ok=True)
     text = SOURCE_MD.read_text(encoding="utf-8")
@@ -82,10 +105,7 @@ def prepare_markdown() -> None:
         text,
     )
 
-    # Start major parts and chapters on new pages in Word/PDF output.
-    text = re.sub(r"\n# Part ", r"\n\\newpage\n\n# Part ", text)
-    text = re.sub(r"\n# Chapter ", r"\n\\newpage\n\n# Chapter ", text)
-    text = text.replace("\n## Appendix A", "\n\\newpage\n\n## Appendix A")
+    text = add_word_page_breaks(text)
 
     WORKING_MD.write_text(text, encoding="utf-8", newline="\n")
 
@@ -98,7 +118,7 @@ def run_pandoc() -> None:
     cmd = [
         pandoc,
         str(WORKING_MD),
-        "--from", "markdown+raw_tex+link_attributes",
+        "--from", "markdown+raw_tex+raw_attribute+link_attributes",
         "--to", "docx",
         "--toc",
         "--number-sections",
