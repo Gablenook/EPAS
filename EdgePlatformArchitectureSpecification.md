@@ -1,6 +1,6 @@
 # Edge Platform™ Architecture Specification (EPAS)
 
-**Version 1.5 – Authoritative Working Draft**  
+**Version 1.6 – Authoritative Working Draft**  
 **Repository:** `Gablenook/EPAS`  
 **Document:** `EdgePlatformArchitectureSpecification.md`  
 **Status:** Master manuscript / active architecture specification  
@@ -24,6 +24,7 @@ This document is the authoritative master manuscript for the Edge Platform Archi
 | 1.3 | 2026-07-03 | Expanded Chapter 1 to define the platform vision, problem addressed, commercial hierarchy, operating domain, naming independence, and chapter boundary. |
 | 1.4 | 2026-07-03 | Expanded Chapter 2 to define governing architectural principles, principle application rules, and platform-level decision tests. |
 | 1.5 | 2026-07-03 | Expanded Chapter 3 to define the Platform Technology taxonomy, qualification criteria, collaboration model, ownership boundaries, and chapter-control role. |
+| 1.6 | 2026-07-03 | Expanded Chapter 4 to define Commissioning Technology responsibilities, data ownership, operational model, failure modes, audit requirements, and platform significance. |
 
 ### Editing Rule
 
@@ -546,45 +547,187 @@ When later chapters introduce detail, they should preserve the taxonomy establis
 
 ## 4.1 Purpose
 
-Commissioning Technology converts generic platform software into a site-specific edge node. It establishes identity, hardware mapping, locker topology, controller ports, local database records, and initial operational state.
+Commissioning Technology converts generic platform software into a site-specific edge node. It establishes the identity, configuration, hardware mapping, locker or compartment topology, controller addressing, local database records, backend registration context, and initial operational state required before governed runtime transactions can occur.
+
+Commissioning is the platform technology that makes a deployed edge node know what it is, where it is, what hardware it controls, which customer or tenant context it belongs to, how it communicates with backend systems, and how it should initialize local operational truth.
+
+## 4.2 Problem Addressed
+
+A physical-edge platform cannot be trustworthy if each field installation depends on informal setup knowledge, hand-edited configuration, undocumented wiring assumptions, or support-person memory. A generic application becomes dangerous when it can open physical compartments without knowing its site identity, locker bank identity, controller branch mapping, compartment inventory, backend endpoint, or initial custody state.
+
+Commissioning Technology addresses this by turning installation setup into a governed platform workflow. It replaces tribal setup labor with a repeatable process that binds software, hardware, site identity, backend authority, local persistence, and audit evidence together before the first live transaction.
 
 ## Figure 4 — Commissioning Flow
 
-> **Diagram Placeholder:** Create a left-to-right process flow: network readiness → customer/site selection → kiosk identity → locker bank identity → controller branch mapping → locker inventory generation → hardware validation → backend registration → initial status creation → commissioning audit record. Include a side lane for administrative review and correction.
+> **Diagram Placeholder:** Create a left-to-right process flow: network readiness → customer/site selection → kiosk identity → locker bank identity → controller branch mapping → locker inventory generation → hardware validation → backend registration → initial status creation → commissioning audit record. Include a side lane for administrative review, correction, recommissioning, and failed-step recovery.
 
-**Caption:** Figure 4 — Commissioning binds a generic platform installation to a specific site, kiosk, locker bank, controller configuration, and operational state.
+**Caption:** Figure 4 — Commissioning binds a generic platform installation to a specific site, kiosk, locker bank, controller configuration, local operating state, backend context, and audit trail.
 
-## 4.2 Commissioning Responsibilities
+## 4.3 Primary Responsibilities
 
-Commissioning must capture or confirm:
+Commissioning Technology owns the controlled process for establishing or confirming:
 
-- Customer identity.
-- Site identity.
-- Kiosk identity.
-- Locker bank identity.
-- Controller branch configuration.
-- Locker numbers and physical positions.
-- Locker sizes and zones.
-- Scanner and credential-reader availability.
-- Network configuration.
-- Backend endpoint settings.
-- Initial locker status.
+- Customer, tenant, or licensee context.
+- Site or location identity.
+- Kiosk or edge-node identity.
+- Locker bank, compartment group, or controlled-device identity.
+- Controller branch, channel, port, or address mapping.
+- Physical compartment inventory, numbering, sizes, zones, and enabled state.
+- Scanner, credential-reader, relay-controller, sensor, and peripheral availability.
+- Network readiness and backend endpoint settings.
+- Local database initialization or migration state.
+- Initial locker, compartment, or controlled-device status.
+- Security material required for backend communication where applicable.
+- Commissioning audit record and diagnostic evidence.
 
-## 4.3 Commissioning Outcomes
+Commissioning must make the resulting configuration explicit enough that Runtime Orchestration, Hardware Abstraction, Local Persistence, Backend Integration, Security Architecture, and Administrative Services can rely on it without guessing.
 
-A properly commissioned edge node should be able to:
+## 4.4 Boundaries and Non-Responsibilities
 
-- Identify itself to backend services.
-- Address every physical locker compartment correctly.
-- Know which lockers are enabled, vacant, occupied, unavailable, or out of service.
-- Validate local hardware communication.
-- Produce a commissioning audit record.
+Commissioning owns identity binding, initial configuration, hardware mapping, and readiness evidence. It does not own live custody decisions, business authorization, workflow execution, transaction recovery, backend business rules, or long-term operational analytics.
 
-Commissioning is not a one-time setup screen. It is a platform capability that directly affects operational trust. The commissioning sequence in **Figure 4** should therefore be treated as a governed platform workflow rather than informal setup labor.
+Boundary examples:
 
-## 4.4 Boundary Rule
+- Commissioning may create or confirm a compartment record; Custody Governance defines what custody states mean.
+- Commissioning may test a relay path; Hardware Abstraction owns device-specific communication.
+- Commissioning may record initial vacant, unavailable, or out-of-service state; Runtime Orchestration and Custody Governance own live transaction changes.
+- Commissioning may register a kiosk or edge node with backend services; Backend Integration owns the ongoing API contract.
+- Commissioning may capture security material or service identity; Security Architecture owns the trust model and protection requirements.
 
-Commissioning owns identity binding and initial configuration. It does not own live custody decisions, transaction recovery, or workflow authorization. Once a deployment is commissioned, runtime services use the commissioned configuration but remain responsible for live transaction behavior.
+## 4.5 Interfaces and Collaborators
+
+Commissioning collaborates with several Platform Technologies:
+
+- **Hardware Abstraction** for controller discovery, relay testing, reader testing, scanner testing, door-sensor validation, and peripheral health checks.
+- **Local Persistence** for site identity, kiosk identity, locker bank records, compartment records, controller mappings, commissioning state, and audit references.
+- **Backend Integration** for backend registration, endpoint validation, configuration sync, and server-side identity confirmation.
+- **Security Architecture** for credential handling, device identity, certificates, secrets, administrator authority, and protected configuration.
+- **Administrative Services** for commissioning review, correction, recommissioning, diagnostics, and support workflows.
+- **Cross-Cutting Services** for logging, correlation IDs, diagnostic export, time services, and error classification.
+- **Deployment Architecture** for installer packages, default configuration, local file locations, runtime dependencies, and rollback expectations.
+
+Commissioning should expose its final output as durable, inspectable platform configuration rather than as hidden setup state.
+
+## 4.6 Data Ownership
+
+Commissioning Technology creates or governs the initial values for several important data categories:
+
+- Customer, tenant, licensee, site, and location identifiers.
+- Kiosk or edge-node identifiers.
+- Locker bank or compartment group identifiers.
+- Controller branch, channel, port, address, and hardware mapping records.
+- Locker or compartment inventory records.
+- Locker size, zone, enabled/disabled, and initial status records.
+- Local database initialization and schema readiness markers.
+- Backend endpoint and environment references.
+- Commissioning status, timestamp, actor, version, and audit records.
+- Hardware validation results and diagnostic evidence.
+
+Commissioning owns the creation and initial binding of these records. After commissioning, the operational meaning and live updates of those records are owned by the appropriate Platform Technologies.
+
+## 4.7 Operational Model
+
+A typical commissioning sequence should include:
+
+1. Verify deployment package and runtime readiness.
+2. Establish administrative authority for commissioning.
+3. Confirm customer, tenant, licensee, site, and location context.
+4. Assign or confirm kiosk / edge-node identity.
+5. Assign or confirm locker bank or controlled-device group identity.
+6. Discover or enter controller branch, channel, port, and address mapping.
+7. Generate or import locker, compartment, or controlled-device inventory.
+8. Confirm physical numbering, size, zone, and enabled state.
+9. Validate scanner, credential reader, relay controller, sensors, and peripherals.
+10. Validate network and backend endpoint reachability where required.
+11. Create local database records and initial operational state.
+12. Register or confirm the edge node with backend services where applicable.
+13. Write commissioning audit evidence.
+14. Mark the edge node ready, partially ready, failed, or requiring administrative review.
+
+The sequence may be interactive, automated, installer-driven, remotely assisted, or repeated during recommissioning. Regardless of method, the output should be deterministic and auditable.
+
+## 4.8 Failure Modes
+
+Commissioning must anticipate failure because commissioning failures often become field-support failures if they are not captured clearly.
+
+Representative failure modes include:
+
+- Missing or invalid customer, site, kiosk, or locker bank identity.
+- Duplicate kiosk or locker bank identity.
+- Incorrect controller branch or compartment mapping.
+- Relay opens the wrong compartment.
+- Scanner, reader, door sensor, controller, or peripheral unavailable.
+- Network unavailable during backend registration.
+- Backend registration rejects the identity or configuration.
+- Local database initialization fails.
+- Configuration file missing, corrupt, stale, or incompatible with software version.
+- Administrator lacks authority to complete commissioning.
+- Partial commissioning leaves the edge node in an unsafe or ambiguous state.
+
+Failure handling should produce visible status, durable diagnostics, and a recovery path. A failed commissioning attempt should not leave the platform pretending it is ready for governed physical transactions.
+
+## 4.9 Configuration Model
+
+Commissioning should distinguish among:
+
+- **Factory or package defaults** supplied by Deployment Architecture.
+- **Platform-required identity fields** such as kiosk ID, site ID, and locker bank ID.
+- **Customer or licensee configuration** such as tenant context, backend environment, and allowed workflows.
+- **Hardware configuration** such as controller branch, relay mapping, sensors, and peripheral assignments.
+- **Operational configuration** such as initial compartment state, enabled status, zones, sizes, and administrative settings.
+- **Security configuration** such as certificates, secrets, service credentials, administrative permissions, and protected local settings.
+
+Configuration should be explicit, versioned where practical, inspectable by authorized administrators, and exportable for support. Commissioning should not rely on hidden assumptions or untracked manual setup.
+
+## 4.10 Security and Audit Considerations
+
+Commissioning changes the authority and identity of a physical edge node, so it must be governed.
+
+Security and audit requirements include:
+
+- Commissioning should require authorized administrative access.
+- Identity assignment and backend registration should be logged.
+- Certificate, secret, token, or credential handling should follow Security Architecture rules.
+- Hardware validation results should be recorded with enough detail for support review.
+- Recommissioning should be distinguishable from initial commissioning.
+- Failed or partial commissioning should leave durable evidence.
+- Manual corrections should be permissioned and audited.
+- Configuration exports should avoid exposing sensitive secrets.
+
+Commissioning evidence is part of operational trust because it proves that the edge node was configured intentionally before physical transactions were allowed.
+
+## 4.11 Commercial Significance
+
+Commissioning Technology is commercially significant because it reduces deployment friction. A platform that can be installed, identified, validated, corrected, and supported through a repeatable process is easier to license, manufacture, deploy, and scale.
+
+Strong commissioning also reduces support cost. Field problems often trace back to misidentified hardware, incorrect compartment mapping, missing backend identity, or unclear local state. Making commissioning a platform technology turns those risks into controlled steps rather than one-off troubleshooting events.
+
+## 4.12 IP Significance
+
+Commissioning Technology contributes to Toren's intellectual-property position by defining a repeatable method for binding a physical edge node to identity, hardware topology, backend context, local persistence, initial custody state, and audit evidence.
+
+The protectable value is not merely a setup screen. The value is the governed commissioning method that converts a generic software/hardware package into a trusted physical-edge execution node.
+
+## 4.13 Related Implementation Evidence
+
+Candidate implementation evidence may include:
+
+- Commissioning screens or administrative workflows.
+- Kiosk identity and locker bank identity records.
+- Controller branch mapping records.
+- Locker or compartment inventory generation logic.
+- SQLite schema and seed data for locker and locker-status records.
+- Hardware validation logs.
+- Backend registration or configuration-sync DTOs.
+- Commissioning audit records.
+- Deployment configuration files and installer defaults.
+- Administrative recommissioning or correction tools.
+
+This evidence should be recorded in Appendix F as implementation matures.
+
+## 4.14 Boundary Rule
+
+Commissioning owns identity binding, hardware topology, local initialization, backend registration context, and readiness evidence. It does not own live custody decisions, transaction execution, transaction recovery, business authorization, or product-specific workflow meaning. Once commissioning is complete, runtime services use the commissioned configuration but remain responsible for live governed transaction behavior.
 
 ---
 
