@@ -1,0 +1,33 @@
+name: Build EPAS Publication DOCX
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'EdgePlatformArchitectureSpecification-v2.0-publication-draft.md'
+      - 'figures/png/**'
+      - 'tools/build_publication_docx.py'
+      - '.github/workflows/build-publication-docx.yml'
+
+jobs:
+  build-docx:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Pandoc
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc
+
+      - name: Build DOCX
+        run: |
+          python tools/build_publication_docx.py
+
+      - name: Upload DOCX artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: EPAS-v2.0-publication-draft-docx
+          path: build/EPAS-v2.0-publication-draft.docx
