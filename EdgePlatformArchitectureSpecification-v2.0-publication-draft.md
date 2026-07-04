@@ -136,7 +136,7 @@ This thesis has four consequences:
 
 ## Figure 1 — Edge Platform Context Model
 
-> **Diagram Placeholder:** Create a context diagram with the Edge Platform at the center. Surrounding entities should include Enterprise Systems, Human Operators, Physical Compartments, Credential/Scan Devices, Hardware Controllers, Local Persistence, Audit Evidence, and Administrative Support. Use arrows to show enterprise authorization flowing toward the edge, physical execution occurring locally, and acknowledgement/reconciliation flowing back to enterprise systems.
+![Figure 1 — Edge Platform Context Model](figures/png/figure-01-edge-platform-context-model.png)
 
 **Caption:** Figure 1 — The Edge Platform coordinates enterprise authority, local physical execution, hardware control, operational state, and audit evidence.
 
@@ -200,7 +200,7 @@ The practical consequence is that EPAS must be written from the platform downwar
 
 ## Figure 2 — Platform / Product / Deployment Hierarchy
 
-> **Diagram Placeholder:** Create a hierarchy with Toren / EPAS / Edge Platform at the top. The middle tier should show product expressions such as asset custody kiosks, package exchange systems, device checkout systems, equipment staging systems, and future edge products. The commercial tier should show licensees, manufacturers, distributors, operators, or product companies that may commercialize platform-based products. The bottom tier should show customer deployments, sites, workflows, hardware configurations, and operating policies. Use downward arrows for architecture inheritance and upward arrows for deployment learning feeding the platform.
+![Figure 2 — Platform / Product / Deployment Hierarchy](figures/png/figure-02-platform-product-deployment-hierarchy.png)
 
 **Caption:** Figure 2 — EPAS governs the reusable Toren Edge Platform; products and licensees express the platform; deployments configure products for specific customers and sites.
 
@@ -415,7 +415,7 @@ The Platform Technology architecture prevents that collapse by assigning each du
 
 ## Figure 3 — Platform Technology Map
 
-> **Diagram Placeholder:** Create a layered architecture map. Suggested center layer: Runtime Orchestration. Surround it with Configurable Workflow Engine, Custody Governance, Transaction Integrity, Hardware Abstraction, Local Persistence, Backend Integration, Security Architecture, Administrative Services, Cross-Cutting Services, Commissioning Technology, Deployment Architecture, and Commercial Architecture. Use boundary boxes to make responsibility separation obvious. Include arrows showing that Runtime Orchestration coordinates but does not own all responsibilities, and that Cross-Cutting Services support all Platform Technologies.
+![Figure 3 — Platform Technology Map](figures/png/figure-03-platform-technology-map.png)
 
 **Caption:** Figure 3 — The Edge Platform is composed of reusable Platform Technologies with explicit ownership, boundaries, collaborators, and commercial significance.
 
@@ -562,7 +562,7 @@ Commissioning Technology addresses this by turning installation setup into a gov
 
 ## Figure 4 — Commissioning Flow
 
-> **Diagram Placeholder:** Create a left-to-right process flow: network readiness → customer/site selection → kiosk identity → locker bank identity → controller branch mapping → locker inventory generation → hardware validation → backend registration → initial status creation → commissioning audit record. Include a side lane for administrative review, correction, recommissioning, and failed-step recovery.
+![Figure 4 — Commissioning Flow](figures/png/figure-04-commissioning-flow.png)
 
 **Caption:** Figure 4 — Commissioning binds a generic platform installation to a specific site, kiosk, locker bank, controller configuration, local operating state, backend context, and audit trail.
 
@@ -750,7 +750,7 @@ The Configurable Workflow Engine addresses this by separating configured intent 
 
 ## Figure 5 — Configurable Workflow Model
 
-> **Diagram Placeholder:** Create a configuration-to-runtime diagram. Left side: workflow definition, workflow key, workflow family, workflow action, ordered steps, validation profile, reference labels, size policy, defect or exception options, home button label, and authorization requirement. Center: Configurable Workflow Engine. Right side: runtime screens, validation request, authorization request, custody decision, compartment assignment, physical action, local state update, transaction journal, acknowledgement, and reconciliation. Show that configuration changes behavior while runtime services preserve common platform execution rules.
+![Figure 5 — Configurable Workflow Model](figures/png/figure-05-configurable-workflow-model.png)
 
 **Caption:** Figure 5 — Workflow configuration expresses deployment-specific behavior while runtime services preserve governed platform execution.
 
@@ -962,7 +962,7 @@ Runtime Orchestration addresses this problem by creating a controlled execution 
 
 ## Figure 6 — Runtime Transaction Lifecycle
 
-> **Diagram Placeholder:** Create a numbered lifecycle diagram: begin transaction → load workflow context → assign correlation identifiers → capture actor/credential → capture reference/asset/package/device → validate → authorize → evaluate custody rules → select or confirm compartment → create/update transaction journal → command hardware → confirm physical action where possible → update local state → send ACK → complete, retry, fail, abandon, or reconcile. Include exception branches for validation failure, authorization failure, no compartment available, hardware failure, door-state ambiguity, local persistence failure, ACK failure, restart recovery, and administrative recovery.
+![Figure 6 — Runtime Transaction Lifecycle](figures/png/figure-06-runtime-transaction-lifecycle.png)
 
 **Caption:** Figure 6 — Runtime Orchestration coordinates configured workflow intent, validation, authorization, custody rules, hardware action, local state, transaction journal, ACK, and reconciliation into one governed transaction lifecycle.
 
@@ -1208,7 +1208,7 @@ Custody Governance addresses this by defining valid states and transitions acros
 
 ## Figure 7 — Custody State Model
 
-> **Diagram Placeholder:** Create a state model with states including Available, Reserved, Staged, Occupied, Checked Out, Retrieved, Returned, Defective, Unknown, and Needs Reconciliation. Show valid transitions for staging, pickup, checkout, return, defect marking, timeout, abandonment, administrative correction, and reconciliation. Include separate but linked lanes for custody object state and compartment state. Highlight that compartment custody and asset/package/device custody may temporarily diverge until reconciled.
+![Figure 7 — Custody State Model](figures/png/figure-07-custody-state-model.png)
 
 **Caption:** Figure 7 — Custody Governance defines valid custody states and transitions for assets, packages, devices, compartments, actors, and physical-edge actions.
 
@@ -1447,7 +1447,7 @@ Without Transaction Integrity, the system may know that a workflow began but not
 
 ## Figure 8 — Transaction Journal and Recovery Model
 
-> **Diagram Placeholder:** Create a journal-centered diagram. Inputs: workflow context, validation results, authorization results, compartment selection, hardware events, local state updates, backend calls, errors, retries, and administrative actions. Center: durable transaction journal with states Created, Validated, Authorized, CompartmentAssigned, DoorCommanded, DoorOpened, PhysicalActionConfirmed, LocalStateUpdated, AckPending, AckSucceeded, AckFailed, NeedsReconciliation, Completed, Failed, Abandoned. Outputs: startup recovery, ACK retry, administrative review, reconciliation request, support export, and audit evidence.
+![Figure 8 — Transaction Journal and Recovery Model](figures/png/figure-08-transaction-journal-recovery-model.png)
 
 **Caption:** Figure 8 — Transaction Integrity preserves local transaction truth and provides recovery, retry, audit, and reconciliation paths when governed physical transactions are interrupted or incomplete.
 
@@ -1667,7 +1667,7 @@ Hardware Abstraction addresses this by placing all device-specific communication
 
 ## Figure 9 — Hardware Abstraction Layer
 
-> **Diagram Placeholder:** Create a layered diagram. Top: workflow, runtime, custody, administration, and backend-integration services. Middle: hardware abstraction interfaces such as scanner adapter, credential reader adapter, locker controller adapter, door sensor adapter, presence sensor adapter, camera adapter, printer adapter, and environmental sensor adapter. Bottom: concrete devices, protocols, drivers, DLLs, serial ports, USB HID devices, network devices, and future physical-control technologies. Show that platform services call stable interfaces while adapters own device-specific behavior.
+![Figure 9 — Hardware Abstraction Layer](figures/png/figure-09-hardware-abstraction-layer.png)
 
 **Caption:** Figure 9 — Hardware Abstraction allows the platform to support multiple physical devices without embedding device details in workflow, custody, or business logic.
 
@@ -1877,7 +1877,7 @@ Local Persistence addresses this by storing the information needed to preserve l
 
 ## Figure 10 — Local Persistence Model
 
-> **Diagram Placeholder:** Create a data model diagram showing local stores for kiosk configuration, site identity, locker bank records, compartment records, locker status, workflow cache, hardware mapping, transaction journal, audit references, diagnostic logs, administrative settings, and reconciliation queue. Show links from commissioning, runtime orchestration, transaction integrity, custody governance, backend integration, administration, and hardware abstraction.
+![Figure 10 — Local Persistence Model](figures/png/figure-10-local-persistence-model.png)
 
 **Caption:** Figure 10 — Local Persistence gives the edge node durable operational memory for configuration, physical state, transaction recovery, audit, diagnostics, and reconciliation.
 
@@ -2074,7 +2074,7 @@ Backend Integration addresses this by defining explicit contracts between enterp
 
 ## Figure 11 — Edge-to-Backend Responsibility Split
 
-> **Diagram Placeholder:** Create a two-column responsibility diagram. Left column: Enterprise Backend, including business rules, actor authority, asset master records, reservation authority, reporting, enterprise audit, configuration distribution, and long-term business records. Right column: Edge Platform, including credential capture, physical execution, compartment state, hardware commands, local transaction journal, local audit, ACK/retry, offline continuity, and reconciliation evidence. Add a center lane for API contracts: validate, authorize, ACK, reconcile, configuration sync, audit ingest, and health/status.
+![Figure 11 — Edge-to-Backend Responsibility Split](figures/png/figure-11-edge-to-backend-responsibility-split.png)
 
 **Caption:** Figure 11 — Enterprise systems govern business authority; edge systems execute physical operations and preserve local truth until acknowledgement or reconciliation completes.
 
@@ -2283,7 +2283,7 @@ Cross-Cutting Services address this by giving the platform shared conventions fo
 
 ## Figure 12 — Cross-Cutting Services Fabric
 
-> **Diagram Placeholder:** Create a horizontal fabric diagram beneath all Platform Technologies. Include structured logging, audit logging, correlation IDs, diagnostics, health checks, error classification, retry policy, configuration loading, serialization, schema validation, telemetry, time services, feature flags, and support export. Show the fabric touching runtime orchestration, backend integration, local persistence, administration, hardware abstraction, security, custody governance, commissioning, and transaction integrity.
+![Figure 12 — Cross-Cutting Services Fabric](figures/png/figure-12-cross-cutting-services-fabric.png)
 
 **Caption:** Figure 12 — Cross-Cutting Services create the observability, reliability, and supportability fabric that spans the full Toren Edge Platform.
 
@@ -2475,7 +2475,7 @@ Security Architecture addresses this by defining trust boundaries around actors,
 
 ## Figure 13 — Security Trust Boundary Model
 
-> **Diagram Placeholder:** Create a trust-boundary diagram. Include actor identity, credential readers, kiosk identity, backend API, service credentials, local administrator, local database/configuration, hardware control, audit records, and support exports. Show trust boundaries around the edge node, backend services, administrative access, physical hardware, local storage, and external credential sources.
+![Figure 13 — Security Trust Boundary Model](figures/png/figure-13-security-trust-boundary-model.png)
 
 **Caption:** Figure 13 — Security Architecture protects the authority to perform physical actions and the evidence proving those actions occurred.
 
@@ -2645,7 +2645,7 @@ Administrative Services address this by making support actions first-class gover
 
 ## Figure 14 — Administrative Operations Model
 
-> **Diagram Placeholder:** Create an administrative operations diagram with roles such as site administrator, support technician, field installer, and platform support. Show governed actions: locker status review, manual compartment test, controller test, workflow review, transaction journal inspection, incomplete transaction recovery, reconciliation action, log export, commissioning review, out-of-service control, and return-to-service. Show all actions flowing into audit logging and permission checks.
+![Figure 14 — Administrative Operations Model](figures/png/figure-14-administrative-operations-model.png)
 
 **Caption:** Figure 14 — Administrative Services provide controlled support, diagnostics, recovery, and override actions without bypassing platform governance.
 
@@ -2822,7 +2822,7 @@ Deployment Architecture addresses this by defining the repeatable package model,
 
 ## Figure 15 — Deployment Package Model
 
-> **Diagram Placeholder:** Create a package/deployment diagram. Include operating system image, application runtime, local database, hardware drivers/libraries, configuration files, certificates/secrets, workflow package, commissioning data, support tools, logging location, upgrade package, rollback package, and field diagnostic export. Show relationships among deployment package, commissioning, runtime, hardware, local persistence, backend integration, and administrative support.
+![Figure 15 — Deployment Package Model](figures/png/figure-15-deployment-package-model.png)
 
 **Caption:** Figure 15 — Deployment Architecture packages the platform into repeatable field installations with supportable upgrade, rollback, diagnostics, and configuration paths.
 
@@ -3013,7 +3013,7 @@ Commercial Architecture addresses this by making reuse an architectural requirem
 
 ## Figure 16 — Commercial Reuse Flywheel
 
-> **Diagram Placeholder:** Create a flywheel diagram: platform architecture → product capability → customer/licensee deployment → field learning → reusable platform improvement → faster future deployment → stronger commercial position. Include cost reduction, supportability, implementation speed, licensing leverage, integration repeatability, IP defensibility, and customer confidence as side benefits.
+![Figure 16 — Commercial Reuse Flywheel](figures/png/figure-16-commercial-reuse-flywheel.png)
 
 **Caption:** Figure 16 — Platform-first engineering compounds commercial value by turning deployment learning into reusable Toren platform capability.
 
@@ -3163,7 +3163,7 @@ Future Platform Evolution addresses this by providing a roadmap and qualificatio
 
 ## Figure 17 — Platform Evolution Roadmap
 
-> **Diagram Placeholder:** Create a roadmap graphic with near-term, mid-term, and long-term evolution lanes. Include multi-bank orchestration, advanced reconciliation, remote commissioning, mobile administration, camera evidence, environmental monitoring, maintenance forecasting, offline-first workflow packages, plugin adapters, expanded custody objects, cloud-managed workflow versioning, and assisted diagnostics. Show each candidate flowing through qualification criteria before becoming platform technology, product feature, or deployment-specific configuration.
+![Figure 17 — Platform Evolution Roadmap](figures/png/figure-17-platform-evolution-roadmap.png)
 
 **Caption:** Figure 17 — Future evolution should extend the platform through reusable Platform Technologies and governed extension points rather than uncontrolled customization.
 
@@ -3326,7 +3326,7 @@ IP Strategy addresses this by connecting platform concepts to implementation evi
 
 ## Figure 18 — IP Strategy Map
 
-> **Diagram Placeholder:** Create a map connecting architectural vocabulary, Platform Technologies, implementation evidence, customer workflows, transaction records, diagrams, commercial packaging, licensing language, and future filings. Show potential IP categories: patentable methods, trade secrets, copyrighted documentation, design language, configuration models, implementation know-how, and commercial process evidence.
+![Figure 18 — IP Strategy Map](figures/png/figure-18-ip-strategy-map.png)
 
 **Caption:** Figure 18 — EPAS supports intellectual property strategy by connecting architecture, vocabulary, implementation evidence, and commercial expression.
 
@@ -3481,7 +3481,7 @@ EPAS establishes:
 
 ## Figure 19 — EPAS Strategic Summary
 
-> **Diagram Placeholder:** Create a one-page executive summary graphic. Center message: governed physical-edge execution. Surround it with platform-first architecture, configurable workflows, operational trust, transaction integrity, hardware abstraction, local persistence, backend integration, administrative recovery, commercial reuse, and IP strategy. This should be suitable as the final slide of an executive deck and the closing figure of the published specification.
+![Figure 19 — EPAS Strategic Summary](figures/png/figure-19-epas-strategic-summary.png)
 
 **Caption:** Figure 19 — EPAS defines a reusable architecture for governed physical-edge execution, commercial platform reuse, and defensible technology development.
 
