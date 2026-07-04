@@ -1,6 +1,6 @@
 # Edge Platform™ Architecture Specification (EPAS)
 
-**Version 1.7 – Authoritative Working Draft**  
+**Version 1.8 – Authoritative Working Draft**  
 **Repository:** `Gablenook/EPAS`  
 **Document:** `EdgePlatformArchitectureSpecification.md`  
 **Status:** Master manuscript / active architecture specification  
@@ -26,6 +26,7 @@ This document is the authoritative master manuscript for the Edge Platform Archi
 | 1.5 | 2026-07-03 | Expanded Chapter 3 to define the Platform Technology taxonomy, qualification criteria, collaboration model, ownership boundaries, and chapter-control role. |
 | 1.6 | 2026-07-03 | Expanded Chapter 4 to define Commissioning Technology responsibilities, data ownership, operational model, failure modes, audit requirements, and platform significance. |
 | 1.7 | 2026-07-03 | Expanded Chapter 5 to define Configurable Workflow Engine responsibilities, workflow schema, execution model, versioning, failure modes, audit requirements, and platform significance. |
+| 1.8 | 2026-07-03 | Expanded Chapter 6 to define Runtime Orchestration responsibilities, transaction lifecycle, coordination model, failure modes, audit requirements, ACK/reconciliation path, and platform significance. |
 
 ### Editing Rule
 
@@ -948,40 +949,237 @@ The Configurable Workflow Engine owns configured workflow intent, step progressi
 
 ## 6.1 Purpose
 
-Runtime Orchestration coordinates the live execution of a workflow. It translates configuration and user input into a governed transaction.
+Runtime Orchestration coordinates the live execution of a configured workflow. It is the Platform Technology that turns workflow intent, actor input, validation results, authorization decisions, custody rules, compartment selection, hardware action, local state updates, transaction journaling, backend acknowledgement, and recovery paths into one governed runtime sequence.
+
+Runtime Orchestration does not own every decision in the transaction. Its purpose is to coordinate the responsible Platform Technologies in the correct order, preserve transaction context, prevent unsafe physical action, and ensure that every governed transaction ends in a terminal, failed, abandoned, or reconciliation-required state.
+
+## 6.2 Problem Addressed
+
+Physical-edge transactions are vulnerable to ambiguity when execution is scattered across screens, hardware calls, backend calls, database updates, and operator behavior. A credential may be accepted on one screen, an asset may be validated by a backend service, a compartment may open locally, a database update may occur, and an acknowledgement may fail later. If those steps are not coordinated as one transaction, the platform cannot reliably explain what happened.
+
+Runtime Orchestration addresses this problem by creating a controlled execution path for live transactions. It ensures that configured workflow intent becomes a transaction context before physical action occurs, that each collaborator performs its responsibility in sequence, and that interruption produces durable evidence rather than uncertainty.
 
 ## Figure 6 — Runtime Transaction Lifecycle
 
-> **Diagram Placeholder:** Create a numbered lifecycle diagram: start transaction → assign correlation IDs → capture actor/credential → capture reference/asset → validate → authorize → select compartment → command hardware → confirm physical action → update local state → send ACK → complete or reconcile. Include exception branches for validation failure, hardware failure, ACK failure, and recovery.
+> **Diagram Placeholder:** Create a numbered lifecycle diagram: begin transaction → load workflow context → assign correlation identifiers → capture actor/credential → capture reference/asset/package/device → validate → authorize → evaluate custody rules → select or confirm compartment → create/update transaction journal → command hardware → confirm physical action where possible → update local state → send ACK → complete, retry, fail, abandon, or reconcile. Include exception branches for validation failure, authorization failure, no compartment available, hardware failure, door-state ambiguity, local persistence failure, ACK failure, restart recovery, and administrative recovery.
 
-**Caption:** Figure 6 — Runtime Orchestration turns configured workflow intent into a governed physical transaction.
+**Caption:** Figure 6 — Runtime Orchestration coordinates configured workflow intent, validation, authorization, custody rules, hardware action, local state, transaction journal, ACK, and reconciliation into one governed transaction lifecycle.
 
-## 6.2 Typical Runtime Sequence
+## 6.3 Primary Responsibilities
 
-A typical custody transaction includes:
+Runtime Orchestration owns the live coordination of a governed physical-edge transaction. Its responsibilities include:
 
-1. Start transaction and assign correlation identifiers.
-2. Capture credential or actor identity.
-3. Capture reference input, asset tag, work order, package code, or device identifier.
-4. Validate the reference against local and backend rules.
-5. Request locker authorization if required.
-6. Select or confirm a compartment.
-7. Open the physical compartment.
-8. Detect or confirm door action when hardware supports it.
-9. Update local operational state.
-10. Send acknowledgement to backend services.
-11. Mark transaction complete or pending reconciliation.
-12. Write audit and diagnostic records.
+- Starting and ending transaction execution.
+- Loading the active workflow definition and workflow action.
+- Establishing transaction context before physical action.
+- Assigning or propagating request IDs, transaction IDs, command IDs, correlation IDs, timestamps, and workflow context.
+- Capturing actor, credential, reference, asset, package, device, work order, or other configured input.
+- Calling validation and authorization services in the configured order.
+- Consulting custody rules before custody-changing actions occur.
+- Selecting, reserving, or confirming the physical compartment or controlled device when required.
+- Creating and updating transaction journal state.
+- Calling hardware abstraction to perform physical action.
+- Updating local operational state after physical action.
+- Sending acknowledgement to backend services.
+- Classifying failures and deciding whether to fail, retry, abandon, or require reconciliation.
+- Preserving enough evidence for recovery and administrative review.
 
-This sequence is represented in **Figure 6**. Its journaled counterpart is shown later in **Figure 8**.
+Runtime Orchestration must coordinate these responsibilities without absorbing the ownership of workflow definition, custody semantics, hardware protocols, backend authority, local storage mechanics, or security policy.
 
-## 6.3 Runtime Rule
+## 6.4 Boundaries and Non-Responsibilities
 
-No physical action should occur without a transaction context. No transaction context should disappear without a terminal state or recovery path.
+Runtime Orchestration owns execution coordination. It does not own the meaning of every action it coordinates.
 
-## 6.4 Boundary Rule
+Boundary examples:
 
-Runtime Orchestration coordinates execution but should not absorb every implementation detail. It should call workflow, custody, hardware, persistence, backend, and audit services through explicit service boundaries. This protects the platform from becoming a single monolithic kiosk procedure.
+- The Configurable Workflow Engine defines the workflow key, action, steps, and configured intent.
+- Backend Integration owns API transport, request/response interpretation, retry policy, and backend contract behavior.
+- Custody Governance owns valid custody states and transition rules.
+- Hardware Abstraction owns scanner, reader, relay, controller, door-sensor, and peripheral behavior.
+- Local Persistence owns durable storage mechanics and local data access.
+- Transaction Integrity owns durable transaction journal state and recovery semantics.
+- Security Architecture owns identity, role, permission, credential, and trust-boundary requirements.
+- Administrative Services owns governed support and recovery actions outside the normal transaction path.
+
+Runtime Orchestration should therefore call collaborators through explicit service boundaries and preserve the evidence of what each collaborator decided or performed.
+
+## 6.5 Interfaces and Collaborators
+
+Runtime Orchestration collaborates with nearly every Platform Technology:
+
+- **Configurable Workflow Engine** provides the active workflow definition, action, steps, labels, validation profile, and configured requirements.
+- **Security Architecture** supplies or evaluates actor identity, credential context, role constraints, and permission boundaries.
+- **Backend Integration** performs validation, authorization, acknowledgement, reconciliation submission, and configuration-dependent backend calls.
+- **Custody Governance** evaluates whether the requested custody action and state transition are valid.
+- **Hardware Abstraction** performs physical input capture and physical output actions such as opening a compartment or reading door state.
+- **Local Persistence** records locker, compartment, workflow, configuration, and local operational state.
+- **Transaction Integrity** records transaction progress, intermediate states, failures, ACK status, and recovery state.
+- **Cross-Cutting Services** provide logging, correlation, diagnostics, time services, serialization, and error classification.
+- **Administrative Services** reviews, retries, reconciles, or resolves transactions that cannot complete normally.
+
+Runtime Orchestration should make collaborator boundaries visible in code, logs, journal records, and diagnostic evidence.
+
+## 6.6 Data Ownership
+
+Runtime Orchestration does not own all transaction data permanently, but it coordinates the creation, propagation, and preservation of runtime context.
+
+Runtime context should include:
+
+- Request ID.
+- Transaction ID.
+- Command ID where applicable.
+- Correlation ID.
+- Workflow key.
+- Workflow action.
+- Workflow version or configuration reference where available.
+- Actor ID or credential reference.
+- Requested action type.
+- Asset, package, device, work order, or reference value.
+- Kiosk or edge-node ID.
+- Locker bank, compartment group, or controlled-device group ID.
+- Selected locker, compartment, or device identifier.
+- Validation result.
+- Authorization result.
+- Hardware command result.
+- Local state update result.
+- ACK result.
+- Failure classification.
+- Terminal, pending, or reconciliation-required state.
+
+Runtime Orchestration owns the propagation and consistency of this context during execution. The durable record of that context is owned by Transaction Integrity, Local Persistence, Backend Integration, Audit, or the appropriate collaborating Platform Technology.
+
+## 6.7 Operational Model
+
+A typical governed runtime sequence includes:
+
+1. Select or receive the configured workflow.
+2. Validate that the workflow is enabled and executable.
+3. Create transaction context and correlation identifiers.
+4. Capture actor, credential, or service identity.
+5. Capture configured reference input such as asset, package, device, work order, or code.
+6. Call validation services using explicit workflow, site, kiosk, locker bank, actor, and reference context.
+7. Call authorization services when required by workflow or policy.
+8. Evaluate custody rules for the requested workflow action.
+9. Select, reserve, or confirm a compartment or controlled device.
+10. Create or update the transaction journal before physical action.
+11. Command hardware through Hardware Abstraction.
+12. Confirm physical action where hardware permits.
+13. Update local operational state.
+14. Send acknowledgement to backend services.
+15. Mark the transaction completed, failed, abandoned, ACK-pending, ACK-failed, or needs-reconciliation.
+16. Write audit and diagnostic evidence.
+
+The order matters. A governed physical action should not be allowed to occur before the platform has enough context to explain and recover it.
+
+## 6.8 Failure Modes
+
+Runtime Orchestration must anticipate failures at every step because runtime failures occur while a physical event may be partially completed.
+
+Representative failure modes include:
+
+- Workflow missing, disabled, stale, or incompatible.
+- Actor or credential missing, invalid, expired, or unauthorized.
+- Reference, asset, package, device, work order, or code invalid.
+- Backend validation unavailable or rejected.
+- Backend authorization unavailable or rejected.
+- Custody rule rejects the requested transition.
+- No eligible compartment or controlled device is available.
+- Compartment selected but cannot be reserved or confirmed.
+- Hardware command fails.
+- Hardware command succeeds but confirmation is unavailable or ambiguous.
+- Door opens but local state update fails.
+- Local state updates but backend acknowledgement fails.
+- Application restarts after physical action but before ACK.
+- Operator abandons the transaction.
+- Duplicate scan, repeated command, timeout, or race condition occurs.
+- Transaction journal cannot be updated.
+- Error classification is incomplete.
+
+Failure handling should preserve a safe and explainable state. When a failure occurs before physical action, the transaction may be rejected or abandoned. When a failure occurs during or after physical action, the platform should preserve local evidence and move toward retry, recovery, or reconciliation rather than pretending the transaction never happened.
+
+## 6.9 Configuration Model
+
+Runtime Orchestration consumes configuration from other Platform Technologies. It should not hide configuration inside procedural code.
+
+Configuration inputs may include:
+
+- Active workflow definition and workflow version.
+- Required steps and input sequence.
+- Validation profile.
+- Authorization requirement policy.
+- Assignment or size-selection policy.
+- Custody transition rules.
+- Hardware mapping and controller configuration.
+- Timeout and retry settings.
+- ACK and reconciliation policy.
+- Administrative recovery policy.
+- Logging, tracing, and diagnostic settings.
+- Security and permission requirements.
+
+Runtime behavior should be deterministic for a given workflow configuration, actor context, input set, hardware state, backend response, and local state.
+
+## 6.10 Security and Audit Considerations
+
+Runtime Orchestration is the point where business authority becomes physical action, so it is a critical security and audit boundary.
+
+Security and audit requirements include:
+
+- Physical action should require explicit transaction context.
+- Actor or credential context should be captured before governed action.
+- Backend validation and authorization should carry explicit identity and workflow context.
+- The selected compartment or device should be tied to the transaction record.
+- Hardware command attempts and results should be logged or journaled.
+- Local state updates should be traceable to the transaction.
+- ACK success or failure should be recorded.
+- Failure classification should be durable enough for support and reconciliation.
+- Administrative recovery should preserve the original runtime evidence.
+
+The platform should be able to reconstruct the execution path from workflow selection through physical action and acknowledgement.
+
+## 6.11 ACK and Reconciliation Path
+
+Runtime Orchestration must treat acknowledgement and reconciliation as part of the transaction lifecycle, not as incidental backend cleanup.
+
+A successful physical-edge transaction should normally produce an ACK containing enough context for backend systems to understand what occurred. That context should include kiosk or edge-node identity, locker bank or controlled-device group identity, workflow key, workflow action, actor identity where applicable, asset/package/device/reference values, selected compartment or device, timestamps, request or correlation identifiers, and the resulting action state.
+
+If ACK fails after local physical action or local state change, Runtime Orchestration should not erase the transaction. It should preserve the transaction as ACK-pending, ACK-failed, needs-retry, or needs-reconciliation according to Transaction Integrity rules. Administrative Services may later review and resolve the transaction, but the original runtime evidence must remain intact.
+
+## 6.12 Commercial Significance
+
+Runtime Orchestration is commercially significant because it is the repeatable execution pattern that makes multiple products and licensee deployments behave consistently. It allows different workflows and hardware configurations to inherit a common operational backbone.
+
+A strong orchestration model reduces support cost, improves customer confidence, supports auditability, and makes new deployments easier to certify and explain. It is one of the clearest places where the Toren Edge Platform becomes more valuable than a one-off kiosk application.
+
+## 6.13 IP Significance
+
+Runtime Orchestration contributes to Toren's intellectual-property position by defining a repeatable method for converting configured workflow intent into governed physical-edge execution while preserving transaction context, local truth, backend acknowledgement, and recovery evidence.
+
+The protectable value is not the idea of opening a compartment. The value is the coordinated orchestration method that connects identity, workflow, authorization, custody, hardware action, local persistence, transaction journaling, ACK, and reconciliation into a recoverable platform transaction.
+
+## 6.14 Related Implementation Evidence
+
+Candidate implementation evidence may include:
+
+- Transaction execution services.
+- Runtime context objects.
+- Workflow selection and step progression logic.
+- Validation and authorization service calls.
+- Locker or compartment assignment services.
+- Hardware command service calls.
+- Local state update methods.
+- Transaction journal table and state transitions.
+- ACK request DTOs and service methods.
+- Reconciliation request DTOs and service methods.
+- Correlation ID and request ID propagation.
+- Startup recovery and incomplete transaction handling.
+- Audit logs and diagnostic traces.
+- Error classification and retry handling.
+
+This evidence should be expanded in Appendix F as the implementation matures.
+
+## 6.15 Boundary Rule
+
+Runtime Orchestration owns the coordinated execution of a governed transaction. It does not own workflow definition, custody semantics, hardware protocols, backend business authority, local storage mechanics, security policy, or administrative recovery policy. Its responsibility is to preserve transaction context, call the right collaborators in the right order, prevent unsafe physical action, and ensure every transaction reaches a terminal, retry, failure, abandoned, ACK-pending, or reconciliation-required state.
 
 ---
 
